@@ -1,26 +1,110 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  --color-paper: #f4f1e8;
+  --color-paper-light: #fbf9f2;
+  --color-ink: #15241e;
+  --color-ink-soft: #3d4f46;
+  --color-pine: #1e4a39;
+  --color-pine-deep: #142f26;
+  --color-leaf: #2e6b4f;
+  --color-sage: #7a9588;
+  --color-line: #e2dccc;
+  --color-line-strong: #d3cbb4;
+  --color-clay: #c4762c;
+  --color-clay-deep: #a05e1f;
+  --color-rose: #b04a3a;
+  --color-cream: #efe9d8;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex), ui-monospace, monospace;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --shadow-soft: 0 1px 2px rgba(21, 36, 30, 0.05), 0 8px 24px -12px rgba(21, 36, 30, 0.12);
+  --shadow-lift: 0 2px 4px rgba(21, 36, 30, 0.06), 0 18px 40px -16px rgba(21, 36, 30, 0.22);
+
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade-in: fade-in 0.9s ease both;
+  --animate-ticker: ticker 32s linear infinite;
+  --animate-pulse-soft: pulse-soft 2.4s ease-in-out infinite;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(22px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01" on, "cv02" on;
+}
+
+::selection {
+  background: var(--color-leaf);
+  color: var(--color-paper-light);
+}
+
+/* film grain overlay for texture */
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* ruled medical-chart lines */
+.ruled {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 30px,
+    rgba(46, 107, 79, 0.06) 30px,
+    rgba(46, 107, 79, 0.06) 31px
+  );
+}
+
+.paper-texture {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(46, 107, 79, 0.08), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(196, 118, 44, 0.06), transparent),
+    var(--color-paper);
+}
+
+.ink-texture {
+  background-image:
+    radial-gradient(ellipse 90% 60% at 80% 0%, rgba(255, 255, 255, 0.05), transparent),
+    radial-gradient(ellipse 70% 50% at 10% 100%, rgba(46, 107, 79, 0.35), transparent),
+    var(--color-pine-deep);
+}
+
+.dotted-grid {
+  background-image: radial-gradient(rgba(21, 36, 30, 0.14) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.hairline-b {
+  border-bottom: 1px solid var(--color-line);
 }
