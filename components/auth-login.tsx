@@ -52,13 +52,13 @@ export function LoginPage() {
     }
   };
 
-  const quickLogin = async (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword("demo1234");
+  const quickLogin = async (demo: (typeof demoAccounts)[number]) => {
+    setEmail(demo.email);
+    setPassword(demo.password);
     setError("");
     setBusy(true);
     try {
-      const s = await login(demoEmail, "demo1234");
+      const s = await login(demo.email, demo.password);
       router.replace(roleHome(s.user.role));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
@@ -91,15 +91,16 @@ export function LoginPage() {
     >
       <h1 className="font-display text-3xl font-semibold tracking-tight text-ink">Welcome back</h1>
       <p className="mt-2 text-sm text-ink-soft">
-        Sign in to continue. For this demo, any account uses password{" "}
-        <code className="rounded bg-cream px-1.5 py-0.5 font-mono text-xs text-ink">demo1234</code>.
+        Use a quick-login button below, or sign in manually (doctor &amp; patient:{" "}
+        <code className="rounded bg-cream px-1.5 py-0.5 font-mono text-xs text-ink">demo1234</code>
+        , admin: <code className="rounded bg-cream px-1.5 py-0.5 font-mono text-xs text-ink">xora-ai</code>).
       </p>
 
       <div className="mt-6 grid grid-cols-3 gap-2">
         {demoAccounts.map((a) => (
           <button
             key={a.email}
-            onClick={() => quickLogin(a.email)}
+            onClick={() => quickLogin(a)}
             className="rounded-xl border border-line-strong bg-paper-light px-3 py-2.5 text-center transition-all hover:border-leaf hover:shadow-soft"
           >
             <span className="block font-mono text-[10px] uppercase tracking-wider text-sage">{a.role}</span>

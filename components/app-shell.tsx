@@ -129,7 +129,8 @@ export function AppShell({
 
 export const NAV = {
   admin: [
-    { href: "/admin", label: "Approvals", icon: icons.shield, exact: true },
+    { href: "/admin", label: "Console", icon: icons.shield, exact: true },
+    { href: "/admin/analytics", label: "Analytics", icon: icons.spark },
   ] as NavItem[],
   doctor: [
     { href: "/doctor", label: "Overview", icon: icons.home, exact: true },

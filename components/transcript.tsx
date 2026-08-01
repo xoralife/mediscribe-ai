@@ -7,13 +7,19 @@ import type { TranscriptSegment } from "@/lib/types";
 export function Transcript({
   segments,
   playing,
+  activeIndex,
 }: {
   segments: TranscriptSegment[];
   playing?: boolean;
+  activeIndex?: number | null;
 }) {
   const [active, setActive] = useState<number | null>(null);
 
   useEffect(() => {
+    if (activeIndex !== undefined) {
+      setActive(activeIndex);
+      return;
+    }
     if (!playing) {
       setActive(null);
       return;
@@ -24,7 +30,7 @@ export function Transcript({
       i++;
     }, 2200);
     return () => clearInterval(iv);
-  }, [playing, segments.length]);
+  }, [playing, segments.length, activeIndex]);
 
   const speakerColor = (s: string) =>
     s.toLowerCase().includes("doctor") ? "text-pine" : "text-clay-deep";

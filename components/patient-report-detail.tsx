@@ -107,7 +107,10 @@ export function PatientReportDetail() {
           </span>
           <div>
             <p className="font-mono text-[10px] uppercase tracking-wider text-sage">Recording</p>
-            <p className="text-sm font-medium text-ink">{report.audio_name}</p>
+            <p className="text-sm font-medium text-ink">{report.audio_name ?? "Consultation audio"}</p>
+            {report.audio_url && (
+              <audio src={report.audio_url} controls preload="metadata" className="mt-2 w-56" />
+            )}
           </div>
         </Card>
         <Card className="flex items-center gap-3 p-4">

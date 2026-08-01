@@ -34,7 +34,7 @@ export function DoctorOverview() {
       <PageHeader
         eyebrow="Doctor workspace"
         title={`Good to see you, ${user?.name.split(" ")[0] ?? "Doctor"}`}
-        description="Your practice at a glance — invite patients, generate notes from consultations, and review AI drafts."
+        description="Your practice at a glance — add patients, generate notes from consultations, and review AI drafts."
         actions={
           <Button>
             <Link href="/doctor/generate">+ Generate note</Link>
@@ -83,7 +83,7 @@ export function DoctorOverview() {
                           <div className="min-w-0">
                             <p className="truncate text-sm font-medium text-ink">{patientName(r.patient_id)}</p>
                             <p className="mt-0.5 text-xs text-ink-soft">
-                              {r.audio_name} · {relativeTime(r.created_at)}
+                              {r.audio_name ?? "Consultation audio"} · {relativeTime(r.created_at)}
                             </p>
                           </div>
                           {r.status === "approved" ? (
@@ -108,11 +108,11 @@ export function DoctorOverview() {
               </div>
               {patients.length === 0 ? (
                 <EmptyState
-                  title="No patients invited"
-                  description="Create and invite your first patient to start building their care records."
+                  title="No patients yet"
+                  description="Add your first patient to start building their care records."
                   action={
                     <Button variant="outline">
-                      <Link href="/doctor/patients?new=1">Invite a patient</Link>
+                      <Link href="/doctor/patients?new=1">Add a patient</Link>
                     </Button>
                   }
                 />

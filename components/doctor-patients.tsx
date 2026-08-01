@@ -14,6 +14,7 @@ const patientSchema = z.object({
   name: z.string().trim().min(2, "Enter the patient's full name"),
   email: z.string().trim().email("Enter a valid email address"),
   dob: z.string().min(1, "Enter a date of birth"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 type PatientForm = z.infer<typeof patientSchema>;
 
@@ -23,7 +24,7 @@ export function PatientsPage() {
   const [showNew, setShowNew] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [tempPassword, setTempPassword] = useState("");
+  const [success, setSuccess] = useState("");
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [searching, setSearching] = useState(false);
@@ -66,7 +67,7 @@ export function PatientsPage() {
     try {
       await api.createPatient(values);
       setPatients(await api.myPatients());
-      setTempPassword("demo1234");
+      setSuccess(`Patient created — share the login password you set with ${values.name}.`);
       setSearch("");
       setSearchResults([]);
       reset();
@@ -83,7 +84,7 @@ export function PatientsPage() {
       <PageHeader
         eyebrow="Patient management"
         title="Your patients"
-        description="Patients can only be invited by a doctor — there is no public self-registration."
+        description="Patients are created by their doctor — there is no public self-registration."
         actions={
           <div className="flex items-center gap-2">
             <div className="relative">
@@ -112,7 +113,7 @@ export function PatientsPage() {
               <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden>
                 <path d="M10 4v12M4 10h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
               </svg>
-              Invite
+              Add patient
             </Button>
           </div>
         }
@@ -141,6 +142,16 @@ export function PatientsPage() {
               <Input type="date" aria-invalid={!!errors.dob} {...register("dob")} />
               {errors.dob && <p className="mt-1 text-xs text-rose">{errors.dob.message}</p>}
             </Field>
+            <Field label="Patient password">
+              <Input
+                type="password"
+                autoComplete="new-password"
+                placeholder="Set their login password"
+                aria-invalid={!!errors.password}
+                {...register("password")}
+              />
+              {errors.password && <p className="mt-1 text-xs text-rose">{errors.password.message}</p>}
+            </Field>
             {error && (
               <p className="rounded-lg border border-rose/25 bg-rose/10 px-3 py-2 text-sm text-rose sm:col-span-3">
                 {error}
@@ -151,14 +162,14 @@ export function PatientsPage() {
                 Cancel
               </Button>
               <Button type="submit" loading={busy}>
-                Create & invite
+                Create patient
               </Button>
             </div>
           </form>
         </div>
       )}
 
-      {tempPassword && (
+      {success && (
         <div className="mb-8 rounded-2xl border border-leaf/30 bg-leaf/10 p-5 animate-fade-up">
           <div className="flex items-start gap-3">
             <svg viewBox="0 0 24 24" fill="none" className="mt-0.5 h-5 w-5 shrink-0 text-leaf" stroke="currentColor" strokeWidth="1.8">
@@ -166,21 +177,10 @@ export function PatientsPage() {
               <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <div>
-              <p className="font-medium text-pine">Patient invited</p>
-              <p className="mt-1 text-sm text-pine/80">
-                Share these credentials offline with the patient — in a real deployment an email
-                invite would be sent instead.
-              </p>
-              <div className="mt-3 flex flex-wrap items-center gap-3">
-                <code className="rounded-lg border border-leaf/25 bg-paper-light px-3 py-1.5 font-mono text-sm text-ink">
-                  {tempPassword}
-                </code>
-                <span className="font-mono text-[11px] uppercase tracking-wider text-sage">
-                  temporary password
-                </span>
-              </div>
+              <p className="font-medium text-pine">Patient created</p>
+              <p className="mt-1 text-sm text-pine/80">{success}</p>
               <button
-                onClick={() => setTempPassword("")}
+                onClick={() => setSuccess("")}
                 className="mt-3 text-xs font-medium text-pine underline underline-offset-2 hover:text-leaf"
               >
                 Dismiss
@@ -221,7 +221,7 @@ export function PatientsPage() {
                   </span>
                   <Badge tone="pine">Active</Badge>
                 </div>
-                <p className="mt-2 font-mono text-[10px] text-sage">Invited {relativeTime(p.created_at)}</p>
+                <p className="mt-2 font-mono text-[10px] text-sage">Added {relativeTime(p.created_at)}</p>
               </Card>
             ))}
           </div>
@@ -229,9 +229,9 @@ export function PatientsPage() {
       ) : patients.length === 0 ? (
         <EmptyState
           title="No patients yet"
-          description="Invite your first patient to begin building their consultation records."
+          description="Add your first patient to begin building their consultation records."
           action={
-            <Button onClick={() => setShowNew(true)}>Invite your first patient</Button>
+            <Button onClick={() => setShowNew(true)}>Add your first patient</Button>
           }
         />
       ) : (
@@ -253,7 +253,7 @@ export function PatientsPage() {
                 </span>
                 <Badge tone="pine">Active</Badge>
               </div>
-              <p className="mt-2 font-mono text-[10px] text-sage">Invited {relativeTime(p.created_at)}</p>
+              <p className="mt-2 font-mono text-[10px] text-sage">Added {relativeTime(p.created_at)}</p>
             </Card>
           ))}
         </div>

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { AppShell, NAV } from "@/components/app-shell";
 import { Badge, Button, Card, EmptyState, PageHeader } from "@/components/ui";
 import { api } from "@/lib/api";
-import { formatDateTime, initials, relativeTime } from "@/lib/format";
+import { formatDateTime, initials, relativeTime, transcriptSegments } from "@/lib/format";
 import type { Report, User } from "@/lib/types";
 
 export function ReportsPage() {
@@ -76,7 +76,7 @@ export function ReportsPage() {
                         )}
                       </div>
                       <p className="mt-0.5 text-sm text-ink-soft">
-                        {r.audio_name} · {formatDateTime(r.created_at)}
+                        {r.audio_name ?? "Consultation audio"} · {formatDateTime(r.created_at)}
                       </p>
                     </div>
                   </div>
@@ -88,7 +88,7 @@ export function ReportsPage() {
                       {relativeTime(isApproved ? (r.approved_at ?? r.created_at) : r.created_at)}
                     </p>
                     <p className="mt-1 font-mono text-[10px] text-sage">
-                      {r.transcript_json.length} transcript turns
+                      {transcriptSegments(r.transcript_json).length} transcript turns
                     </p>
                   </div>
                 </Card>

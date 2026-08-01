@@ -62,7 +62,7 @@ export function PatientDashboard() {
                     </div>
                     <p className="mt-0.5 text-sm text-ink-soft">
                       {r.extraction_json.diagnosis.join(" · ") || "Consultation note"} ·{" "}
-                      {r.audio_name}
+                      {r.audio_name ?? "Consultation audio"}
                     </p>
                   </div>
                 </div>

@@ -79,7 +79,8 @@ function findReport(db: DB, id: string): Report | undefined { return db.reports.
 export async function mockLogin(p: LoginPayload): Promise<AuthSession> {
   await delay(); const db = loadDB(); const user = findUser(db, p.email);
   if (!user) fail("No account found for this email.");
-  if (p.password !== "demo1234") fail("Incorrect password. For the demo, use demo1234.");
+  const expected = (user as { password?: string }).password ?? "demo1234";
+  if (p.password !== expected) fail("Incorrect password.");
   const session: AuthSession = { token: `demo.${user.id}.${Date.now()}`, user };
   saveSession(session); return session;
 }
@@ -109,7 +110,8 @@ export async function mockRejectDoctor(userId: string): Promise<void> { await de
 export async function mockCreatePatient(p: CreatePatientPayload): Promise<User> {
   await delay(); const session = loadSession(); if (!session) fail("Not authenticated."); const db = loadDB();
   if (findUser(db, p.email)) fail("A patient with this email already exists.");
-  const patient: User = { id: uid(), name: p.name, email: p.email, role: "patient", is_approved: true, doctor_id: session.user.id, dob: p.dob, created_at: now() };
+  const patient: User & { password?: string } = { id: uid(), name: p.name, email: p.email, role: "patient", is_approved: true, doctor_id: session.user.id, dob: p.dob, created_at: now() };
+  patient.password = p.password;
   db.users.push(patient); saveDB(db); return patient;
 }
 

@@ -40,6 +40,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${fraunces.variable} ${instrument.variable} ${plex.variable} h-full antialiased`}
     >
       <body className="grain min-h-full flex flex-col">

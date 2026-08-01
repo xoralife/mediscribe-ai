@@ -17,7 +17,13 @@ export type ReportStatus = "draft_generated" | "approved";
 export interface TranscriptSegment {
   speaker: string;
   time: number;
+  end?: number;
   text: string;
+}
+
+export interface TranscriptData {
+  text?: string;
+  segments: Array<{ speaker: string | null; start: number | null; end: number | null; text: string }>;
 }
 
 export interface Medication {
@@ -58,7 +64,9 @@ export interface Report {
   audio_url?: string | null;
   audio_name?: string | null;
   duration_sec?: number;
-  transcript_json: TranscriptSegment[];
+  patient_name?: string | null;
+  patient_email?: string | null;
+  transcript_json?: TranscriptSegment[] | TranscriptData | null;
   extraction_json: Extraction;
   validation_flags: Record<string, string>[];
   status: ReportStatus;
@@ -87,6 +95,7 @@ export interface CreatePatientPayload {
   name: string;
   email: string;
   dob: string;
+  password: string;
 }
 
 export interface GenerateReportPayload {
@@ -104,6 +113,73 @@ export interface HealthStatus {
   message?: string;
   version?: string;
   database?: string;
+}
+
+export interface AdminStats {
+  total_users: number;
+  doctors: number;
+  pending_doctors: number;
+  patients: number;
+  reports: number;
+  approved_reports: number;
+  draft_reports: number;
+}
+
+export interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+  is_approved: boolean;
+  specialization?: string | null;
+  doctor_id?: string | null;
+  doctor_name?: string | null;
+  report_count?: number;
+  created_at: string;
+}
+
+export type IntegrationStatus = "ok" | "error" | "unconfigured";
+
+export interface Integration {
+  configured: boolean;
+  status: IntegrationStatus;
+  detail?: string | null;
+}
+
+export interface IntegrationsStatus {
+  database: Integration;
+  mistral: Integration;
+  gemini: Integration;
+  supabase: Integration;
+  rxnorm: Integration;
+  checked_at: string;
+}
+
+export interface DailyReportPoint {
+  date: string;
+  generated: number;
+  approved: number;
+}
+
+export interface DailyUserPoint {
+  date: string;
+  new_users: number;
+  doctors: number;
+  patients: number;
+}
+
+export interface DoctorReportBreakdown {
+  doctor_name: string;
+  total: number;
+  approved: number;
+}
+
+export interface AdminAnalytics {
+  reports_over_time: DailyReportPoint[];
+  users_over_time: DailyUserPoint[];
+  reports_by_doctor: DoctorReportBreakdown[];
+  totals: AdminStats;
+  approval_rate: number;
 }
 
 export interface ReportMeta {

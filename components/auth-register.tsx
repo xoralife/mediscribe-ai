@@ -50,7 +50,7 @@ export function RegisterPage() {
             <p className="mt-2 text-sm text-ink-soft">
               Your account starts as{" "}
               <em className="font-medium text-clay-deep not-italic">pending review</em> — an admin
-              approves it before you can invite patients or generate notes.
+              approves it before you can add patients or generate notes.
             </p>
 
             <form onSubmit={submit} className="mt-8 space-y-4">

@@ -22,7 +22,7 @@ function PendingInner() {
           Your application is under review
         </h1>
         <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-ink-soft sm:text-base">
-          Thanks for registering. An admin needs to approve your account before you can invite
+          Thanks for registering. An admin needs to approve your account before you can add
           patients or generate notes. Check back shortly — in the demo, sign in as the{" "}
           <Link href="/login" className="font-semibold text-pine hover:text-leaf">
             admin
@@ -38,7 +38,7 @@ function PendingInner() {
             {[
               ["01", "Admin reviews your specialization and details"],
               ["02", "Your role changes from pending to approved doctor"],
-              ["03", "Sign in, invite patients, and start generating notes"],
+              ["03", "Sign in, add patients, and start generating notes"],
             ].map(([n, t]) => (
               <li key={n} className="flex items-start gap-3">
                 <span className="mt-0.5 font-display text-sm font-semibold text-leaf">{n}</span>
