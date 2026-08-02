@@ -203,21 +203,7 @@ export function AppShell({
             </Link>
           ))}
 
-          {user?.role !== "admin" && (
-            <div className="pt-4 mt-4 border-t border-border">
-              <Link
-                href={user?.role === "doctor" ? "/doctor/profile" : "/patient"}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 ${
-                  pathname === "/doctor/profile"
-                    ? "bg-brand-light text-brand"
-                    : "text-ink-soft hover:bg-surface-alt hover:text-ink"
-                }`}
-              >
-                {icons.user}
-                <span className="flex-1">Profile</span>
-              </Link>
-            </div>
-          )}
+          
         </nav>
 
        
