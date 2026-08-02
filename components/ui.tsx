@@ -1,9 +1,9 @@
 import { forwardRef } from "react";
 
-/* Button */
+/* ── Button ── */
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "dark" | "outline" | "ghost" | "danger";
+  variant?: "primary" | "dark" | "outline" | "ghost" | "danger" | "accent";
   size?: "sm" | "md" | "lg";
   full?: boolean;
   loading?: boolean;
@@ -12,24 +12,24 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = "primary", size = "md", full, loading, className = "", children, disabled, ...rest }, ref) => {
     const variants: Record<string, string> = {
-      primary:
-        "bg-pine text-paper-light hover:bg-leaf border border-pine hover:border-leaf shadow-soft",
-      dark: "bg-ink text-paper-light hover:bg-pine-deep border border-ink",
+      primary: "bg-brand text-white hover:bg-brand-deep shadow-sm",
+      accent: "bg-accent text-white hover:bg-accent-deep shadow-sm",
+      dark: "bg-ink text-white hover:bg-slate-800 shadow-sm",
       outline:
-        "bg-transparent text-ink border border-line-strong hover:border-leaf hover:text-leaf",
-      ghost: "bg-transparent text-ink-soft hover:text-ink hover:bg-cream",
-      danger: "bg-rose text-paper-light hover:opacity-90 border border-rose",
+        "bg-white text-ink border border-border-strong hover:border-brand hover:text-brand shadow-sm",
+      ghost: "bg-transparent text-ink-soft hover:text-ink hover:bg-surface-alt",
+      danger: "bg-danger text-white hover:bg-rose-700 shadow-sm",
     };
     const sizes: Record<string, string> = {
-      sm: "text-xs px-3 py-1.5 gap-1.5",
-      md: "text-sm px-4 py-2.5 gap-2",
-      lg: "text-base px-6 py-3.5 gap-2",
+      sm: "text-xs px-3 py-1.5 gap-1.5 rounded-md",
+      md: "text-sm px-4 py-2 gap-2 rounded-lg",
+      lg: "text-sm px-6 py-3 gap-2 rounded-lg font-semibold",
     };
     return (
       <button
         ref={ref}
         disabled={disabled || loading}
-        className={`inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 ${variants[variant]} ${sizes[size]} ${full ? "w-full" : ""} ${className}`}
+        className={`inline-flex items-center justify-center font-medium transition-all duration-150 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40 ${variants[variant]} ${sizes[size]} ${full ? "w-full" : ""} ${className}`}
         {...rest}
       >
         {loading && (
@@ -45,18 +45,20 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = "Button";
 
-/* Field (label + input) */
+/* ── Input ── */
 
 export const Input = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
   ({ className = "", ...rest }, ref) => (
     <input
       ref={ref}
-      className={`w-full rounded-lg border border-line-strong bg-paper-light px-3.5 py-2.5 text-sm text-ink placeholder:text-sage outline-none transition-all focus:border-leaf focus:ring-2 focus:ring-leaf/25 ${className}`}
+      className={`w-full rounded-lg border border-border-strong bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-muted outline-none transition-all duration-150 focus:border-brand focus:ring-2 focus:ring-brand/20 ${className}`}
       {...rest}
     />
   )
 );
 Input.displayName = "Input";
+
+/* ── Field ── */
 
 export function Field({
   label,
@@ -71,14 +73,14 @@ export function Field({
     <label className="block">
       <span className="mb-1.5 flex items-baseline justify-between">
         <span className="text-sm font-medium text-ink">{label}</span>
-        {hint && <span className="font-mono text-[10px] uppercase tracking-wider text-sage">{hint}</span>}
+        {hint && <span className="text-xs text-ink-muted">{hint}</span>}
       </span>
       {children}
     </label>
   );
 }
 
-/* Badge */
+/* ── Badge ── */
 
 export function Badge({
   tone = "pine",
@@ -90,15 +92,15 @@ export function Badge({
   children: React.ReactNode;
 }) {
   const tones: Record<string, string> = {
-    pine: "bg-leaf/12 text-leaf border-leaf/25",
-    clay: "bg-clay/12 text-clay-deep border-clay/30",
-    rose: "bg-rose/10 text-rose border-rose/25",
-    sage: "bg-sage/15 text-ink-soft border-sage/30",
-    ink: "bg-ink/6 text-ink border-ink/15",
+    pine: "bg-brand/10 text-brand border-brand/20",
+    clay: "bg-warning-bg text-warning border-warning/30",
+    rose: "bg-danger-bg text-danger border-danger/25",
+    sage: "bg-surface-alt text-ink-soft border-border",
+    ink: "bg-slate-100 text-ink border-slate-200",
   };
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider ${tones[tone]}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider ${tones[tone]}`}
     >
       {dot && <span className="h-1.5 w-1.5 rounded-full bg-current animate-pulse-soft" />}
       {children}
@@ -106,7 +108,7 @@ export function Badge({
   );
 }
 
-/* Card */
+/* ── Card ── */
 
 export function Card({
   className = "",
@@ -116,15 +118,13 @@ export function Card({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className={`rounded-2xl border border-line bg-paper-light shadow-soft ${className}`}
-    >
+    <div className={`rounded-xl border border-border bg-white shadow-card ${className}`}>
       {children}
     </div>
   );
 }
 
-/* Section title for app pages */
+/* ── Page header ── */
 
 export function PageHeader({
   eyebrow,
@@ -141,11 +141,11 @@ export function PageHeader({
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div>
         {eyebrow && (
-          <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.24em] text-leaf">
+          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-brand">
             {eyebrow}
           </p>
         )}
-        <h1 className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        <h1 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
           {title}
         </h1>
         {description && <p className="mt-2 max-w-2xl text-sm text-ink-soft">{description}</p>}
@@ -155,7 +155,7 @@ export function PageHeader({
   );
 }
 
-/* Empty state */
+/* ── Empty state ── */
 
 export function EmptyState({
   icon,
@@ -169,9 +169,9 @@ export function EmptyState({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center rounded-2xl border border-dashed border-line-strong bg-paper-light/60 px-6 py-16 text-center">
-      {icon && <div className="mb-4 text-leaf">{icon}</div>}
-      <h3 className="font-display text-xl font-semibold text-ink">{title}</h3>
+    <div className="flex flex-col items-center rounded-xl border border-dashed border-border-strong bg-white px-6 py-16 text-center">
+      {icon && <div className="mb-4 text-brand">{icon}</div>}
+      <h3 className="text-lg font-semibold text-ink">{title}</h3>
       <p className="mt-1 max-w-sm text-sm text-ink-soft">{description}</p>
       {action && <div className="mt-6">{action}</div>}
     </div>

@@ -1,21 +1,20 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AppShell, NAV } from "@/components/app-shell";
 import { Badge, Card, EmptyState, PageHeader } from "@/components/ui";
 import { api } from "@/lib/api";
-import { formatDate, formatDuration, relativeTime } from "@/lib/format";
-import type { Report, User } from "@/lib/types";
+import { formatDate, formatDateTime } from "@/lib/format";
+import type { AppointmentHistoryItem, User } from "@/lib/types";
 
 export function PatientDashboard() {
-  const [reports, setReports] = useState<Report[]>([]);
+  const [appointments, setAppointments] = useState<AppointmentHistoryItem[]>([]);
   const [doctor, setDoctor] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([api.patientReports(), api.patientDoctors()]).then(([r, d]) => {
-      setReports(r);
+    Promise.all([api.appointmentHistory(), api.patientDoctors()]).then(([a, d]) => {
+      setAppointments(a);
       setDoctor(d);
       setLoading(false);
     });
@@ -27,78 +26,49 @@ export function PatientDashboard() {
     <AppShell nav={NAV.patient} roleLabel="Patient">
       <PageHeader
         eyebrow="Patient portal"
-        title="Your health records"
-        description={`Reports below were reviewed and approved by ${docName}. You can only ever see notes your doctor has finalised.`}
+        title="Appointment history"
+        description={`A record of your consultations with ${docName} — the date, time and doctor for each visit.`}
       />
 
       {loading ? (
         <div className="space-y-4">
           {[0, 1].map((i) => (
-            <div key={i} className="h-36 animate-pulse rounded-2xl bg-cream" />
+            <div key={i} className="h-24 animate-pulse rounded-2xl bg-slate-100" />
           ))}
         </div>
-      ) : reports.length === 0 ? (
+      ) : appointments.length === 0 ? (
         <EmptyState
-          title="No reports yet"
-          description="When your doctor approves a note from your consultation, it will appear here."
+          title="No appointments yet"
+          description="When you have a consultation with your doctor, it will appear here."
         />
       ) : (
         <div className="space-y-4">
-          {reports.map((r) => (
-            <Card key={r.id} className="overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lift">
-              <div className="flex flex-wrap items-center justify-between gap-4 p-6">
-                <div className="flex items-center gap-4">
-                  <span className="grid h-12 w-12 place-items-center rounded-xl bg-leaf/10 text-leaf">
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6" aria-hidden>
-                      <path d="M5 3h11l4 4v14H5V3zm10 1v4h4l-4-4zM8 11h8v1.5H8V11zm0 3.5h8V16H8v-1.5zm0 3.5h6v1.5H8V18z" />
-                    </svg>
-                  </span>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-display text-lg font-semibold text-ink">
-                        Consultation · {formatDate(r.approved_at)}
-                      </h3>
-                      <Badge tone="pine" dot>Approved</Badge>
-                    </div>
-                    <p className="mt-0.5 text-sm text-ink-soft">
-                      {r.extraction_json.diagnosis.join(" · ") || "Consultation note"} ·{" "}
-                      {r.audio_name}
-                    </p>
+          {appointments.map((a) => (
+            <Card key={a.id} className="flex flex-wrap items-center justify-between gap-4 p-6">
+              <div className="flex items-center gap-4">
+                <span className="grid h-12 w-12 place-items-center rounded-xl bg-brand/10 text-brand">
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6" aria-hidden>
+                    <path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V10h14v10zM5 8V6h14v2H5zm3 6h2v2H8v-2zm4 0h2v2h-2v-2zm-4 4h2v2H8v-2zm4 0h2v2h-2v-2z" />
+                  </svg>
+                </span>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-semibold text-ink">{formatDate(a.appointment_at)}</h3>
+                    <Badge tone="pine" dot>Completed</Badge>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="font-mono text-[10px] uppercase tracking-wider text-sage">
-                    {formatDuration(r.duration_sec)} · {relativeTime(r.approved_at ?? r.created_at)}
-                  </span>
-                  <Link
-                    href={`/patient/reports/${r.id}`}
-                    className="rounded-lg border border-line-strong px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-leaf hover:text-leaf"
-                  >
-                    View
-                  </Link>
+                  <p className="mt-0.5 text-sm text-ink-soft">
+                    {formatDateTime(a.appointment_at)}
+                  </p>
                 </div>
               </div>
-              <div className="border-t border-line bg-paper px-6 py-4">
-                <div className="grid gap-4 sm:grid-cols-3">
-                  <div>
-                    <p className="font-mono text-[10px] uppercase tracking-wider text-sage">Assessment</p>
-                    <p className="mt-1 text-sm text-ink line-clamp-2">{r.extraction_json.soap.assessment}</p>
-                  </div>
-                  <div>
-                    <p className="font-mono text-[10px] uppercase tracking-wider text-sage">Plan</p>
-                    <p className="mt-1 text-sm text-ink line-clamp-2">{r.extraction_json.soap.plan}</p>
-                  </div>
-                  <div>
-                    <p className="font-mono text-[10px] uppercase tracking-wider text-sage">Medications</p>
-                    <div className="mt-1 flex flex-wrap gap-1.5">
-                      {r.extraction_json.medications.map((m, i) => (
-                        <span key={i} className="rounded-full border border-line-strong bg-paper-light px-2.5 py-0.5 text-xs text-ink">
-                          {m.name} {m.dosage}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+              <div className="text-right">
+                <p className="font-mono text-[10px] uppercase tracking-wider text-slate-400">
+                  Doctor
+                </p>
+                <p className="mt-0.5 text-sm font-medium text-ink">{a.doctor_name}</p>
+                {a.specialization && (
+                  <p className="mt-0.5 text-xs text-ink-soft">{a.specialization}</p>
+                )}
               </div>
             </Card>
           ))}

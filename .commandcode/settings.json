@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(npx tsc --noEmit 2 >& 1)",
+      "Shell(ss:*)",
+      "Shell(grep:*)",
+      "Shell(netstat:*)",
+      "Shell(ps -p 586257 -o pid,ppid,cmd 2>/dev/null; echo \"---\"; ls /home/xoralife/Documents/assignment/madicare/MediScribe-AI/ 2>/dev/null | head -30)",
+      "Shell(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/ 2>&1; echo; echo \"---\"; ls /home/xoralife/Documents/assignment/madicare/MediScribe-AI/app/ 2>/dev/null | head; echo \"---root---\"; ls /home/xoralife/Documents/assignment/madicare/MediScribe-AI/main.py 2>/dev/null || echo \"no main.py in root\")",
+      "Shell(ls:*)",
+      "Shell(ps:*)",
+      "Shell(kill 586257 2>/dev/null; sleep 1; ps -p 586257 >/dev/null 2>&1 && echo \"still running\" || echo \"killed\"; ss -tlnp 2>/dev/null | grep ':8000' || echo \"port 8000 free\")",
+      "Shell(ps -p 586256 -o pid,ppid,cmd 2>/dev/null; echo \"---\"; kill -9 586257 2>/dev/null; sleep 1; ps -p 586257 >/dev/null 2>&1 && echo \"still running\" || echo \"killed\")",
+      "Shell(cd /home/xoralife/Documents/assignment/madicare/MediScribe-AI && nohup python3.14 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 > /tmp/mediscribe-backend.log 2>&1 & echo \"started pid $!\")",
+      "Shell(sleep 3; curl -s -m 5 -o /dev/null -w \"HTTP %{http_code}\\n\" http://localhost:8000/ 2>&1; tail -5 /tmp/mediscribe-backend.log 2>/dev/null)",
+      "Shell(curl -s -m 10 -o /dev/null -w \"HTTP %{http_code}\\n\" http://localhost:8000/ 2>&1; echo \"---log---\"; tail -8 /tmp/mediscribe-backend.log 2>/dev/null)",
+      "Shell(kill 807981 2>/dev/null; sleep 1; ss -tlnp 2>/dev/null | grep ':8000' || echo \"port 8000 free\")",
+      "Shell(cd /home/xoralife/Documents/assignment/madicare/MediScribe-AI && nohup .venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 > /tmp/mediscribe-backend.log 2>&1 & echo \"started pid $!\")",
+      "Shell(curl -s -m 10 http://localhost:8000/health)",
+      "Shell(kill 809342 2>/dev/null; sleep 1; ss -tlnp 2>/dev/null | grep ':8000' || echo \"port 8000 free\")",
+      "Shell(cd /home/xoralife/Documents/assignment/madicare/MediScribe-AI && ls data/ 2>/dev/null; ls *.db 2>/dev/null; echo \"---\"; .venv/bin/python -c \" import sqlite3, glob for db in glob.glob('**/*.db', recursive=True): print('DB:', db) try: con = sqlite3.connect(db) cur = con.cursor() cur.execute(\\\"SELECT name FROM sqlite_master WHERE type='table'\\\") tables = [r[0] for r in cur.fetchall()] print(' tables:', tables) if 'reports' in tables: cur.execute('SELECT id, patient_id, status, created_at FROM reports ORDER BY created_at DESC LIMIT 10') for row in cur.fetchall(): print(' report:', row) if 'users' in tables: cur.execute('SELECT id, name, role FROM users LIMIT 10') for row in cur.fetchall(): print(' user:', row) con.close() except Exception as e: print(' err:', e) \")",
+      "Shell(.venv/bin/python:*)",
+      "Shell(TOKEN=$(curl -s -m 10 -X POST http://localhost:8000/api/v1/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"dr.rohan@mediscribe.ai\",\"password\":\"demo1234\"}' | .venv/bin/python -c \"import sys,json; print(json.load(sys.stdin)['access_token'])\" 2>/dev/null); echo \"token: ${TOKEN:0:20}...\"; echo \"---reports---\"; curl -s -m 10 http://localhost:8000/api/v1/doctor/reports -H \"Authorization: Bearer $TOKEN\" | head -c 600; echo)",
+      "Shell(cd /home/xoralife/Documents/assignment/madicare/MediScribe-AI && TOKEN=$(curl -s -m 10 -X POST http://localhost:8000/api/v1/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"dr.rohan@mediscribe.ai\",\"password\":\"demo1234\"}' | .venv/bin/python -c \"import sys,json; print(json.load(sys.stdin)['access_token'])\") && echo \"token ok\" && curl -s -m 10 http://localhost:8000/api/v1/doctor/reports -H \"Authorization: Bearer $TOKEN\" | .venv/bin/python -m json.tool | head -50)",
+      "Shell(cd /home/xoralife/Documents/assignment/madicare/MediScribe-AI && TOKEN=$(curl -s -m 10 -X POST http://localhost:8000/api/v1/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"dr.rohan@mediscribe.ai\",\"password\":\"demo1234\"}' | .venv/bin/python -c \"import sys,json; print(json.load(sys.stdin)['access_token'])\") && curl -s -m 10 http://localhost:8000/api/v1/doctor/reports -H \"Authorization: Bearer $TOKEN\" | .venv/bin/python -c \" import sys, json data = json.load(sys.stdin) print('count:', len(data)) for r in data: print('status:', r['status'], '| created_at:', r['created_at']) \")"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  }
+}

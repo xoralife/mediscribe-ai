@@ -59,7 +59,7 @@ export function AdminHealthDashboard(): React.JSX.Element {
             <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-leaf" /> /doctor/patients</li>
             <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-leaf" /> /generate-report</li>
             <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-leaf" /> /records/{"/{id}"}</li>
-            <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-leaf" /> /patient/reports</li>
+            <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-leaf" /> /patient/history</li>
           </ul>
           <p className="mt-4 font-mono text-[10px] text-sage">Base: http://localhost:8000/api/v1</p>
         </Card>

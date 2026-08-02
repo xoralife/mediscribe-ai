@@ -59,16 +59,12 @@ export function GeneratePage() {
       setError("Select a patient first.");
       return;
     }
-    if (!file) {
-      setError("Choose a consultation audio file.");
-      return;
-    }
     setError("");
     setPhaseIdx(0);
     setPhase("uploading");
     setRunId((n) => n + 1);
     try {
-      const r = await api.generateReport({ patient_id: patientId, audio: file });
+      const r = await api.generateReport({ patient_id: patientId, audio: file ?? undefined });
       setReport(r);
     } catch (e) {
       setPhase("idle");
@@ -110,7 +106,7 @@ export function GeneratePage() {
               <p className="mt-2 text-xs text-clay-deep">
                 No patients yet —{" "}
                 <Link href="/doctor/patients?new=1" className="font-medium underline underline-offset-2">
-                  invite one first
+                  add one first
                 </Link>
                 .
               </p>
@@ -177,6 +173,9 @@ export function GeneratePage() {
                   onChange={(e) => selectFile(e.target.files?.[0] ?? null)}
                 />
               </div>
+              <p className="mt-2 text-xs text-sage">
+                No audio handy? You can still generate — the demo uses a built-in sample consultation.
+              </p>
             </div>
 
             {error && (
@@ -186,7 +185,7 @@ export function GeneratePage() {
             )}
 
             <div className="mt-6">
-              <Button full size="lg" onClick={run} disabled={!patientId || !file}>
+              <Button full size="lg" onClick={run} disabled={!patientId}>
                 <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden>
                   <path d="M10 1.5 11.8 7l5.7 1.8-5.7 1.8L10 16.5 8.2 10.6 2.5 8.8 8.2 7 10 1.5z" />
                 </svg>

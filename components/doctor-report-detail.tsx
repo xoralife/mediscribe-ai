@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AppShell, NAV } from "@/components/app-shell";
 import { Badge, Button, Card, PageHeader } from "@/components/ui";
 import { SOAPEditor } from "@/components/soap-editor";
 import { ConfidenceStrip, SOAPView } from "@/components/soap";
 import { Transcript } from "@/components/transcript";
 import { api } from "@/lib/api";
-import { formatDate, formatDateTime, formatDuration, initials } from "@/lib/format";
+import { formatDate, formatDateTime, formatDuration, initials, transcriptSegments } from "@/lib/format";
 import type { Extraction, Report, User } from "@/lib/types";
 
 export function ReportDetail() {
@@ -19,10 +19,11 @@ export function ReportDetail() {
   const [patient, setPatient] = useState<User | null>(null);
   const [drafts, setDrafts] = useState<Extraction | null>(null);
   const [edit, setEdit] = useState(false);
-  const [playing, setPlaying] = useState(false);
   const [saving, setSaving] = useState(false);
   const [approving, setApproving] = useState(false);
   const [toast, setToast] = useState("");
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [time, setTime] = useState(0);
 
   useEffect(() => {
     api.getReport(params.id).then(async (r) => {
@@ -39,6 +40,25 @@ export function ReportDetail() {
     () => (patient ? initials(patient.name) : "PA"),
     [patient]
   );
+
+  const segs = useMemo(
+    () => transcriptSegments(report?.transcript_json ?? []),
+    [report]
+  );
+  /* Highlight the transcript line in sync with the audio: the current line stays
+     highlighted until its `end` time — the highlight only moves to the next line
+     once that next line actually starts (a gap keeps the just-finished line active). */
+  const activeIndex = useMemo(() => {
+    let active = -1;
+    for (let i = 0; i < segs.length; i++) {
+      const st = segs[i].time ?? 0;
+      if (time < st) break;
+      active = i;
+      const en = segs[i].end;
+      if (en != null && time < en) break;
+    }
+    return active;
+  }, [segs, time]);
 
   const flash = (msg: string) => {
     setToast(msg);
@@ -143,31 +163,31 @@ export function ReportDetail() {
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-sage">Recording</p>
-                <p className="mt-0.5 text-sm font-medium text-ink">{report.audio_name}</p>
+                <p className="mt-0.5 text-sm font-medium text-ink">{report.audio_name ?? "Consultation audio"}</p>
                 <p className="mt-0.5 font-mono text-[10px] text-sage">
                   {formatDuration(report.duration_sec)} · diarized transcript
                 </p>
               </div>
-              <button
-                onClick={() => setPlaying(!playing)}
-                className={`grid h-12 w-12 place-items-center rounded-full transition-all ${
-                  playing ? "bg-clay text-paper-light" : "bg-pine text-paper-light hover:bg-leaf"
-                }`}
-                aria-label={playing ? "Pause transcript demo" : "Play transcript demo"}
-              >
-                {playing ? (
-                  <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden>
-                    <rect x="5" y="4" width="3.5" height="12" rx="1" />
-                    <rect x="11.5" y="4" width="3.5" height="12" rx="1" />
-                  </svg>
-                ) : (
-                  <svg viewBox="0 0 20 20" fill="currentColor" className="ml-0.5 h-5 w-5" aria-hidden>
-                    <path d="M6 4.5v11l8-5.5-8-5.5z" />
-                  </svg>
-                )}
-              </button>
             </div>
-            <Transcript segments={report.transcript_json} playing={playing} />
+            {report.audio_url ? (
+              <audio
+                ref={audioRef}
+                src={report.audio_url}
+                controls
+                preload="metadata"
+                className="mb-4 w-full"
+                onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
+                onEnded={() => setTime(0)}
+                onLoadedMetadata={(e) => {
+                  if (!report.duration_sec && e.currentTarget.duration) setReport({ ...report, duration_sec: Math.round(e.currentTarget.duration) });
+                }}
+              />
+            ) : (
+              <p className="mb-4 rounded-lg border border-line bg-paper px-3 py-2.5 text-xs text-ink-soft">
+                No recording file attached to this report.
+              </p>
+            )}
+            <Transcript segments={segs} activeIndex={activeIndex} />
           </Card>
 
           <Card className="p-5">

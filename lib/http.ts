@@ -7,8 +7,7 @@ export const API_BASE_URL =
 
 export const http = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 20000,
-  headers: { "Content-Type": "application/json" },
+  timeout: 120000,
 });
 
 /* Attach the JWT on every request. */
@@ -20,11 +19,16 @@ http.interceptors.request.use((config) => {
   return config;
 });
 
-/* On 401, clear the session and send the user back to the login page. */
+/* On 401, clear the session and send the user back to the login page.
+   On 403 for admin routes, the stored session no longer holds admin rights
+   (stale/role-changed token) — same treatment so the dashboard can be recovered. */
 http.interceptors.response.use(
   (res) => res,
   (error: AxiosError) => {
-    if (error.response?.status === 401) {
+    if (
+      error.response?.status === 401 ||
+      (error.response?.status === 403 && error.config?.url?.includes("/admin/"))
+    ) {
       clearSession();
       if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
         window.location.href = "/login";

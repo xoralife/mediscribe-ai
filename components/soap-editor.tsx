@@ -86,6 +86,7 @@ export function SOAPEditor({
                 className="w-full resize-y rounded-lg bg-transparent text-sm leading-relaxed text-ink outline-none placeholder:text-sage"
               />
             </label>
+            
           ))}
         </div>
       </div>
@@ -93,53 +94,66 @@ export function SOAPEditor({
       <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-6">
           <ArrayEditor label="Symptoms" values={extraction.symptoms} onChange={(v) => set({ symptoms: v })} placeholder="Symptom" />
+          <div>
+            <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-sage">Medications</p>
+            <div className="space-y-3">
+              {extraction.medications.map((m, i) => (
+                <div key={i} className="rounded-lg border border-line-strong bg-paper-light p-3">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs text-sage">{String(i + 1).padStart(2, "0")}</span>
+                    <input
+                      value={m.name}
+                      onChange={(e) => {
+                        const meds = [...extraction.medications];
+                        meds[i] = { ...m, name: e.target.value };
+                        set({ medications: meds });
+                      }}
+                      placeholder="Medication name"
+                      className="w-full rounded-lg border border-line-strong bg-paper-light px-3 py-2 text-sm text-ink outline-none focus:border-leaf"
+                    />
+                    <button
+                      onClick={() => set({ medications: extraction.medications.filter((_, j) => j !== i) })}
+                      className="shrink-0 rounded-lg border border-line-strong px-2 py-1.5 text-xs text-sage hover:border-rose hover:text-rose"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <input
+                      value={m.dosage}
+                      onChange={(e) => {
+                        const meds = [...extraction.medications];
+                        meds[i] = { ...m, dosage: e.target.value };
+                        set({ medications: meds });
+                      }}
+                      placeholder="Dosage"
+                      className="w-full rounded-lg border border-line-strong bg-paper-light px-3 py-2 text-sm text-ink outline-none focus:border-leaf"
+                    />
+                    <input
+                      value={m.frequency}
+                      onChange={(e) => {
+                        const meds = [...extraction.medications];
+                        meds[i] = { ...m, frequency: e.target.value };
+                        set({ medications: meds });
+                      }}
+                      placeholder="Frequency"
+                      className="w-full rounded-lg border border-line-strong bg-paper-light px-3 py-2 text-sm text-ink outline-none focus:border-leaf"
+                    />
+                  </div>
+                </div>
+              ))}
+              <button
+                onClick={() => set({ medications: [...extraction.medications, { name: "", dosage: "", frequency: "" }] })}
+                className="rounded-lg border border-dashed border-line-strong px-3 py-2 text-xs font-medium text-sage transition-colors hover:border-leaf hover:text-leaf"
+              >
+                + Add medication
+              </button>
+            </div>
+          </div>
           <ArrayEditor label="Medical History" values={extraction.medical_history} onChange={(v) => set({ medical_history: v })} placeholder="History item" />
           <ArrayEditor label="Diagnosis" values={extraction.diagnosis} onChange={(v) => set({ diagnosis: v })} placeholder="Diagnosis" />
         </div>
         <div className="space-y-6">
-          <div>
-            <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-sage">Medications</p>
-            <div className="space-y-2">
-              {extraction.medications.map((m, i) => (
-                <div key={i} className="grid min-w-0 grid-cols-[1fr_90px_110px_28px] items-center gap-2">
-                  <input
-                    value={m.name}
-                    onChange={(e) => {
-                      const meds = [...extraction.medications];
-                      meds[i] = { ...m, name: e.target.value };
-                      set({ medications: meds });
-                    }}
-                    className="w-full min-w-0 rounded-lg border border-line-strong bg-paper-light px-3 py-2 text-sm text-ink outline-none focus:border-leaf"
-                  />
-                  <input
-                    value={m.dosage}
-                    onChange={(e) => {
-                      const meds = [...extraction.medications];
-                      meds[i] = { ...m, dosage: e.target.value };
-                      set({ medications: meds });
-                    }}
-                    className="w-full min-w-0 rounded-lg border border-line-strong bg-paper-light px-3 py-2 text-sm text-ink outline-none focus:border-leaf"
-                  />
-                  <input
-                    value={m.frequency}
-                    onChange={(e) => {
-                      const meds = [...extraction.medications];
-                      meds[i] = { ...m, frequency: e.target.value };
-                      set({ medications: meds });
-                    }}
-                    className="w-full min-w-0 rounded-lg border border-line-strong bg-paper-light px-3 py-2 text-sm text-ink outline-none focus:border-leaf"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => set({ medications: extraction.medications.filter((_, j) => j !== i) })}
-                    className="text-sage hover:text-rose"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
           <ArrayEditor label="Recommendations" values={extraction.recommendations} onChange={(v) => set({ recommendations: v })} placeholder="Recommendation" />
           <ArrayEditor label="Follow-up Points" values={extraction.follow_up_points} onChange={(v) => set({ follow_up_points: v })} placeholder="Follow-up" />
         </div>
