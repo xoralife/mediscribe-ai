@@ -56,7 +56,7 @@ const seedExtraction: Extraction = {
 };
 
 const seedDB = (): DB => ({ users: [
-  { id: "u-admin", name: "Maya Krishnan", email: "admin@mediscribe.ai", role: "admin", is_approved: true, specialization: null, created_at: daysAgo(40) },
+  { id: "u-admin", name: "Maya Krishnan", email: "admin@gmail.com", role: "admin", is_approved: true, specialization: null, created_at: daysAgo(40) },
   { id: "u-dr", name: "Dr. Rohan Deshpande", email: "dr.rohan@mediscribe.ai", role: "doctor", is_approved: true, specialization: "Internal Medicine", created_at: daysAgo(30) },
   { id: "u-pending", name: "Dr. Priya Nair", email: "dr.priya@mediscribe.ai", role: "pending_doctor", is_approved: false, specialization: "Pediatrics", created_at: daysAgo(1) },
   { id: "u-patient", name: "Ananya Sharma", email: "ananya@mediscribe.ai", role: "patient", is_approved: true, specialization: null, doctor_id: "u-dr", dob: "1992-04-18", created_at: daysAgo(20) },
@@ -141,7 +141,7 @@ export async function mockPatientReports(): Promise<Report[]> { await delay(); c
 export async function mockPatientDoctors(): Promise<User[]> { await delay(200); const session = loadSession(); if (!session) return []; const db = loadDB(); return db.users.filter((u) => u.id === session.user.doctor_id); }
 
 export const demoAccounts = [
-  { email: "admin@mediscribe.ai", label: "Admin", role: "admin" },
+  { email: "admin@gmail.com", label: "Admin", role: "admin" },
   { email: "dr.rohan@mediscribe.ai", label: "Doctor", role: "doctor" },
   { email: "ananya@mediscribe.ai", label: "Patient", role: "patient" },
 ] as const;

@@ -150,46 +150,10 @@ export function LoginPage() {
       </p>
 
       {/* Social buttons */}
-      <div className="mt-6 grid grid-cols-2 gap-3">
-        <button
-          type="button"
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-border-strong bg-white px-4 py-2.5 text-sm font-medium text-ink transition-all hover:border-brand hover:text-brand"
-          onClick={() => setError("Social sign-in is disabled for the demo — use your email or a demo account.")}
-        >
-          <GoogleIcon />
-          Google
-        </button>
-        <button
-          type="button"
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-border-strong bg-white px-4 py-2.5 text-sm font-medium text-ink transition-all hover:border-brand hover:text-brand"
-          onClick={() => setError("Social sign-in is disabled for the demo — use your email or a demo account.")}
-        >
-          <MicrosoftIcon />
-          Microsoft
-        </button>
-      </div>
+      
 
-      <div className="my-6 flex items-center gap-3 text-ink-muted">
-        <span className="h-px flex-1 bg-border" />
-        <span className="text-xs font-medium uppercase tracking-wider">Or continue with</span>
-        <span className="h-px flex-1 bg-border" />
-      </div>
 
       {/* Demo quick-login */}
-      <div className="grid grid-cols-3 gap-2">
-        {demoAccounts.map((a) => (
-          <button
-            key={a.email}
-            onClick={() => quickLogin(a)}
-            className="rounded-lg border border-border bg-surface-alt px-3 py-2.5 text-center transition-all hover:border-brand hover:bg-white hover:shadow-soft"
-          >
-            <span className="block text-[10px] font-semibold uppercase tracking-wider text-brand">
-              {a.role}
-            </span>
-            <span className="mt-0.5 block truncate text-xs font-medium text-ink">{a.label}</span>
-          </button>
-        ))}
-      </div>
 
       <form onSubmit={submit} className="mt-6 space-y-4">
         <Field label="Email Address">

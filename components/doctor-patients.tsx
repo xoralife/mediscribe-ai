@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { AppShell, NAV } from "@/components/app-shell";
@@ -33,10 +33,13 @@ export function PatientsPage() {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<PatientForm>({
     resolver: zodResolver(patientSchema),
   });
+
+  const dob = useWatch({ control, name: "dob" });
 
   const load = async () => {
     setLoading(true);
@@ -149,6 +152,20 @@ export function PatientsPage() {
                 <Field label="Date of birth">
                   <Input type="date" aria-invalid={!!errors.dob} {...register("dob")} />
                   {errors.dob && <p className="mt-1 text-xs text-rose">{errors.dob.message}</p>}
+                </Field>
+                <Field label="Age">
+                  <Input
+                    type="number"
+                    inputMode="numeric"
+                    min={0}
+                    max={120}
+                    placeholder="Auto-filled from DOB"
+                    readOnly
+                    value={dob ? ageFromDob(dob) ?? "" : ""}
+                  />
+                  <p className="mt-1 text-xs text-ink-soft">
+                    Calculated automatically from the date of birth
+                  </p>
                 </Field>
                 <Field label="Password">
                   <Input

@@ -370,7 +370,7 @@ export default function LandingPage() {
               <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-muted">Demo accounts</p>
               <ul className="mt-4 space-y-2.5 text-sm">
                 {[
-                  { role: "Admin", email: "admin@mediscribe.ai" },
+                  { role: "Admin", email: "admin@gmail.com" },
                   { role: "Doctor", email: "dr.rohan@mediscribe.ai" },
                   { role: "Patient", email: "ananya@mediscribe.ai" },
                 ].map((a) => (

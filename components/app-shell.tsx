@@ -220,21 +220,7 @@ export function AppShell({
           )}
         </nav>
 
-        {/* Help Center card */}
-        <div className="shrink-0 px-4 pb-4 pt-1">
-          <div className="rounded-xl bg-brand-light p-4">
-            <p className="text-sm font-semibold text-brand-deep">Help Center</p>
-            <p className="mt-1 text-xs leading-relaxed text-ink-soft">
-              Please contact us for more information.
-            </p>
-            <Link
-              href="/health"
-              className="mt-3 inline-flex items-center justify-center rounded-lg bg-brand px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-brand-deep"
-            >
-              Go to Help Center
-            </Link>
-          </div>
-        </div>
+       
 
         {/* User footer */}
         <div className="shrink-0 border-t border-border p-4">

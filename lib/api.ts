@@ -74,7 +74,7 @@ export const api = {
 };
 
 export const demoAccounts = [
-  { email: "admin@mediscribe.ai", label: "Admin", role: "admin", password: "xora-ai" },
+  { email: "admin@gmail.com", label: "Admin", role: "admin", password: "admin123" },
   { email: "dr.rohan@mediscribe.ai", label: "Doctor", role: "doctor", password: "demo1234" },
   { email: "ananya@mediscribe.ai", label: "Patient", role: "patient", password: "demo1234" },
 ] as const;
