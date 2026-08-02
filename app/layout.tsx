@@ -28,9 +28,10 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
+      suppressHydrationWarning
       className={`${inter.variable} h-full antialiased`}
     >
-      <body className="grain min-h-full flex flex-col">
+      <body suppressHydrationWarning className="grain min-h-full flex flex-col">
         <Providers>{children}</Providers>
       </body>
     </html>
