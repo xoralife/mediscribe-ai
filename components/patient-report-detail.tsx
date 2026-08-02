@@ -6,8 +6,9 @@ import { useEffect, useState } from "react";
 import { AppShell, NAV } from "@/components/app-shell";
 import { Badge, Button, Card } from "@/components/ui";
 import { ConfidenceStrip, SOAPView } from "@/components/soap";
+import { Transcript } from "@/components/transcript";
 import { api } from "@/lib/api";
-import { formatDate, formatDateTime, formatDuration } from "@/lib/format";
+import { formatDate, formatDateTime, formatDuration, transcriptSegments } from "@/lib/format";
 import type { Report, User } from "@/lib/types";
 
 export function PatientReportDetail() {
@@ -135,6 +136,10 @@ export function PatientReportDetail() {
             <p className="text-sm font-medium text-ink">Approved by doctor</p>
           </div>
         </Card>
+      </div>
+
+      <div className="mb-8">
+        <Transcript segments={transcriptSegments(report.transcript_json)} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">

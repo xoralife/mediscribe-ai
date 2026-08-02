@@ -18,15 +18,15 @@ import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import type { AdminAnalytics } from "@/lib/types";
 
-const PINE = "#1e4a39";
-const LEAF = "#2e6b4f";
-const CLAY = "#c4762c";
-const CLAY_DEEP = "#a05e1f";
-const SAGE = "#7a9588";
-const LINE = "#e2dccc";
-const LINE_STRONG = "#d3cbb4";
-const PAPER = "#fbf9f2";
-const INK = "#15241e";
+const PINE = "#00a3ff";
+const LEAF = "#0284c7";
+const CLAY = "#f59e0b";
+const CLAY_DEEP = "#d97706";
+const SAGE = "#9ca3af";
+const LINE = "#e5e7eb";
+const LINE_STRONG = "#d1d5db";
+const PAPER = "#ffffff";
+const INK = "#111827";
 
 function shortDate(iso: string): string {
   return new Date(`${iso}T00:00:00`).toLocaleDateString("en-IN", {
@@ -38,7 +38,7 @@ function shortDate(iso: string): string {
 const axisTick = {
   fill: SAGE,
   fontSize: 10,
-  fontFamily: "var(--font-plex), monospace",
+  fontFamily: "var(--font-inter), sans-serif",
 };
 
 function ChartTooltip({

@@ -4,18 +4,25 @@ import * as doctorService from "@/lib/services/doctor";
 import * as reportService from "@/lib/services/report";
 import * as patientService from "@/lib/services/patient";
 import * as healthService from "@/lib/services/health";
+import * as publicService from "@/lib/services/public";
 import { loadSession, clearSession } from "@/lib/token";
 import type {
   AdminAnalytics,
+  AdminDoctorCreate,
   AdminStats,
   AdminUser,
+  AdminUserUpdate,
   AuthSession,
+  ContactMessage,
+  ContactMessageCreate,
   CreatePatientPayload,
+  DoctorProfileUpdate,
   Extraction,
   GenerateReportPayload,
   HealthStatus,
   IntegrationsStatus,
   LoginPayload,
+  PublicDoctor,
   RegisterPayload,
   Report,
   User,
@@ -23,7 +30,10 @@ import type {
 
 export const api = {
   login: (p: LoginPayload): Promise<AuthSession> => authService.login(p),
-  register: (p: RegisterPayload): Promise<User> => authService.register(p),
+  register: (p: RegisterPayload): Promise<{ user_id: string; role: string }> =>
+    authService.register(p),
+  requestPermission: (): Promise<User> => authService.requestPermission(),
+  uploadAvatar: (file: File): Promise<User> => authService.uploadAvatar(file),
   logout(): void { clearSession(); },
   session(): AuthSession | null { return loadSession(); },
   restoreSession(): Promise<AuthSession | null> { return authService.restoreSession(); },
@@ -34,6 +44,11 @@ export const api = {
   adminUsers: (): Promise<AdminUser[]> => adminService.adminUsers(),
   adminIntegrations: (): Promise<IntegrationsStatus> => adminService.adminIntegrations(),
   adminAnalytics: (): Promise<AdminAnalytics> => adminService.adminAnalytics(),
+  adminCreateDoctor: (p: AdminDoctorCreate): Promise<User> => adminService.createDoctor(p),
+  adminUpdateUser: (userId: string, p: AdminUserUpdate): Promise<AdminUser> => adminService.updateUser(userId, p),
+  adminDeleteUser: (userId: string): Promise<void> => adminService.deleteUser(userId),
+  adminUploadUserAvatar: (userId: string, file: File): Promise<AdminUser> =>
+    adminService.uploadUserAvatar(userId, file),
   createPatient: (p: CreatePatientPayload): Promise<User> => doctorService.createPatient(p),
   myPatients: (): Promise<User[]> => doctorService.listPatients(),
   searchPatients: (query: string): Promise<User[]> => doctorService.searchPatients(query),
@@ -45,6 +60,15 @@ export const api = {
   downloadReportPdf: (id: string): Promise<Blob> => reportService.downloadReportPdf(id),
   patientReports: (): Promise<Report[]> => patientService.myReports(),
   patientDoctors: (): Promise<User[]> => patientService.patientDoctors(),
+  publicDoctors: (): Promise<PublicDoctor[]> => publicService.publicDoctors(),
+  sendContactMessage: (p: ContactMessageCreate): Promise<ContactMessage> =>
+    publicService.sendContactMessage(p),
+  doctorMessages: (unreadOnly = false): Promise<ContactMessage[]> =>
+    doctorService.doctorMessages(unreadOnly),
+  markMessageRead: (messageId: string): Promise<ContactMessage> =>
+    doctorService.markMessageRead(messageId),
+  updateDoctorProfile: (p: DoctorProfileUpdate): Promise<User> =>
+    doctorService.updateProfile(p),
   health: (): Promise<HealthStatus> => healthService.getHealth(),
 };
 

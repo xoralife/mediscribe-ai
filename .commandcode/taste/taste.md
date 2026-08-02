@@ -1,0 +1,5 @@
+- Communicates in Hinglish (Hindi written in Latin script, e.g. "ya dakho run nahi horaha ha run abel banav website ko", "paitent page ma Actions yala table hatav"), suggesting replies in the same casual Hinglish register will be well received. Confidence: 0.95
+- Prefers a clean, minimal doctor-portal UI — repeatedly asks to strip out UI elements he doesn't use (action buttons, tabs, table columns like the Actions column and its 3-dot menu) rather than adding features. Confidence: 0.6
+- Often bundles multiple unrelated tasks into a single message (e.g. UI button removals plus a backend/ops fix) and expects all of them to be resolved in one pass. Confidence: 0.6
+- Prefers to run the backend dev server themselves (`uvicorn ... --reload` in their own terminal) and does not want the assistant leaving background processes holding port 8000 that cause "Address already in use". Confidence: 0.7
+- Pastes raw terminal output / full error tracebacks into the chat when reporting an issue (e.g. complete uvicorn `ModuleNotFoundError` stack trace) instead of describing the problem in words — expects the assistant to diagnose from the pasted output. Confidence: 0.7

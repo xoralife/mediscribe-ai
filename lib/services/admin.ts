@@ -1,8 +1,10 @@
 import { http } from "@/lib/http";
 import type {
   AdminAnalytics,
+  AdminDoctorCreate,
   AdminStats,
   AdminUser,
+  AdminUserUpdate,
   IntegrationsStatus,
   User,
 } from "@/lib/types";
@@ -10,6 +12,23 @@ import type {
 export async function pendingDoctors(): Promise<User[]> {
   const { data } = await http.get<User[]>("/admin/pending-doctors");
   return data;
+}
+
+export async function createDoctor(payload: AdminDoctorCreate): Promise<User> {
+  const { data } = await http.post<User>("/admin/doctors", payload);
+  return data;
+}
+
+export async function updateUser(
+  userId: string,
+  payload: AdminUserUpdate
+): Promise<AdminUser> {
+  const { data } = await http.patch<AdminUser>(`/admin/users/${userId}`, payload);
+  return data;
+}
+
+export async function deleteUser(userId: string): Promise<void> {
+  await http.delete(`/admin/users/${userId}`);
 }
 
 export async function adminStats(): Promise<AdminStats> {
@@ -39,4 +58,11 @@ export async function promoteDoctor(userId: string): Promise<User> {
 
 export async function rejectDoctor(userId: string): Promise<void> {
   await http.delete(`/admin/users/${userId}/reject`);
+}
+
+export async function uploadUserAvatar(userId: string, file: File): Promise<AdminUser> {
+  const form = new FormData();
+  form.append("file", file);
+  const { data } = await http.post<AdminUser>(`/admin/users/${userId}/avatar`, form);
+  return data;
 }

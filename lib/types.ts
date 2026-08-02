@@ -9,7 +9,45 @@ export interface User {
   specialization?: string | null;
   doctor_id?: string | null;
   dob?: string | null;
+  avatar_url?: string | null;
+  permission_requested?: boolean;
+  permission_requested_at?: string | null;
   created_at: string;
+}
+
+export interface PublicDoctor {
+  id: string;
+  name: string;
+  email: string;
+  specialization?: string | null;
+  is_approved: boolean;
+  created_at: string;
+}
+
+export interface ContactMessageCreate {
+  doctor_id: string;
+  name: string;
+  email: string;
+  phone: string;
+  age?: string | null;
+  message: string;
+}
+
+export interface ContactMessage {
+  id: string;
+  doctor_id: string;
+  name: string;
+  email: string;
+  phone: string;
+  age?: number | null;
+  message: string;
+  read: boolean;
+  created_at: string;
+}
+
+export interface DoctorProfileUpdate {
+  name?: string;
+  specialization?: string;
 }
 
 export type ReportStatus = "draft_generated" | "approved";
@@ -19,11 +57,13 @@ export interface TranscriptSegment {
   time: number;
   end?: number;
   text: string;
+  text_en?: string | null;
+  text_ur?: string | null;
 }
 
 export interface TranscriptData {
   text?: string;
-  segments: Array<{ speaker: string | null; start: number | null; end: number | null; text: string }>;
+  segments: Array<{ speaker: string | null; start: number | null; end: number | null; text: string; text_en?: string | null; text_ur?: string | null }>;
 }
 
 export interface Medication {
@@ -90,6 +130,19 @@ export interface RegisterPayload {
   password: string;
   specialization: string;
 }
+export interface AdminDoctorCreate {
+  name: string;
+  email: string;
+  password: string;
+  specialization?: string;
+}
+
+export interface AdminUserUpdate {
+  name?: string;
+  email?: string;
+  specialization?: string | null;
+  password?: string;
+}
 
 export interface CreatePatientPayload {
   name: string;
@@ -106,6 +159,9 @@ export interface GenerateReportPayload {
 export interface AuthResponse {
   access_token: string;
   token_type?: string;
+  user_id?: string;
+  role?: string;
+  is_approved?: boolean;
 }
 
 export interface HealthStatus {
@@ -135,6 +191,7 @@ export interface AdminUser {
   doctor_id?: string | null;
   doctor_name?: string | null;
   report_count?: number;
+  dob?: string | null;
   created_at: string;
 }
 

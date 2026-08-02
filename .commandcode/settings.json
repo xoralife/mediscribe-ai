@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(npx tsc --noEmit 2 >& 1)",
+      "Shell(ss:*)",
+      "Shell(grep:*)",
+      "Shell(netstat:*)",
+      "Shell(ps -p 586257 -o pid,ppid,cmd 2>/dev/null; echo \"---\"; ls /home/xoralife/Documents/assignment/madicare/MediScribe-AI/ 2>/dev/null | head -30)",
+      "Shell(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/ 2>&1; echo; echo \"---\"; ls /home/xoralife/Documents/assignment/madicare/MediScribe-AI/app/ 2>/dev/null | head; echo \"---root---\"; ls /home/xoralife/Documents/assignment/madicare/MediScribe-AI/main.py 2>/dev/null || echo \"no main.py in root\")",
+      "Shell(ls:*)",
+      "Shell(ps:*)",
+      "Shell(kill 586257 2>/dev/null; sleep 1; ps -p 586257 >/dev/null 2>&1 && echo \"still running\" || echo \"killed\"; ss -tlnp 2>/dev/null | grep ':8000' || echo \"port 8000 free\")",
+      "Shell(ps -p 586256 -o pid,ppid,cmd 2>/dev/null; echo \"---\"; kill -9 586257 2>/dev/null; sleep 1; ps -p 586257 >/dev/null 2>&1 && echo \"still running\" || echo \"killed\")",
+      "Shell(cd /home/xoralife/Documents/assignment/madicare/MediScribe-AI && nohup python3.14 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 > /tmp/mediscribe-backend.log 2>&1 & echo \"started pid $!\")",
+      "Shell(sleep 3; curl -s -m 5 -o /dev/null -w \"HTTP %{http_code}\\n\" http://localhost:8000/ 2>&1; tail -5 /tmp/mediscribe-backend.log 2>/dev/null)",
+      "Shell(curl -s -m 10 -o /dev/null -w \"HTTP %{http_code}\\n\" http://localhost:8000/ 2>&1; echo \"---log---\"; tail -8 /tmp/mediscribe-backend.log 2>/dev/null)",
+      "Shell(kill 807981 2>/dev/null; sleep 1; ss -tlnp 2>/dev/null | grep ':8000' || echo \"port 8000 free\")",
+      "Shell(cd /home/xoralife/Documents/assignment/madicare/MediScribe-AI && nohup .venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 > /tmp/mediscribe-backend.log 2>&1 & echo \"started pid $!\")",
+      "Shell(curl -s -m 10 http://localhost:8000/health)",
+      "Shell(kill 809342 2>/dev/null; sleep 1; ss -tlnp 2>/dev/null | grep ':8000' || echo \"port 8000 free\")"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  }
+}

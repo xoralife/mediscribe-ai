@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { saveSession } from "@/lib/token";
 import type { AuthSession, User } from "@/lib/types";
 
 interface AuthCtx {
@@ -10,8 +11,8 @@ interface AuthCtx {
   session: AuthSession | null;
   ready: boolean;
   login: (email: string, password: string) => Promise<AuthSession>;
-  register: (p: { name: string; email: string; password: string; specialization: string }) => Promise<User>;
   logout: () => void;
+  updateUser: (user: User) => void;
 }
 
 const Ctx = createContext<AuthCtx>(null as unknown as AuthCtx);
@@ -32,13 +33,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const s = await api.login({ email, password });
-    setSession(s);
+    // Pending doctors don't get a persisted session — the login page shows the
+    // pending popup instead of redirecting them anywhere.
+    if (s.user.role !== "pending_doctor") {
+      setSession(s);
+    }
     return s;
-  };
-
-  const register = async (p: { name: string; email: string; password: string; specialization: string }) => {
-    const u = await api.register(p);
-    return u;
   };
 
   const logout = () => {
@@ -47,8 +47,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.push("/");
   };
 
+  const updateUser = (user: User) => {
+    setSession((prev) => {
+      if (!prev) return prev;
+      const next = { ...prev, user };
+      saveSession(next);
+      return next;
+    });
+  };
+
   return (
-    <Ctx.Provider value={{ user: session?.user ?? null, session, ready, login, register, logout }}>
+    <Ctx.Provider value={{ user: session?.user ?? null, session, ready, login, logout, updateUser }}>
       {children}
     </Ctx.Provider>
   );

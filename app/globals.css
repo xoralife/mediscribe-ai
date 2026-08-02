@@ -1,35 +1,57 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #f4f1e8;
-  --color-paper-light: #fbf9f2;
-  --color-ink: #15241e;
-  --color-ink-soft: #3d4f46;
-  --color-pine: #1e4a39;
-  --color-pine-deep: #142f26;
-  --color-leaf: #2e6b4f;
-  --color-sage: #7a9588;
-  --color-line: #e2dccc;
-  --color-line-strong: #d3cbb4;
-  --color-clay: #c4762c;
-  --color-clay-deep: #a05e1f;
-  --color-rose: #b04a3a;
-  --color-cream: #efe9d8;
+  /* ── ScriBee-style medical SaaS palette ── */
+  --color-white: #ffffff;
+  --color-surface: #f5f5f5;
+  --color-surface-alt: #fafafa;
+  --color-ink: #111827;
+  --color-ink-soft: #4b5563;
+  --color-ink-muted: #9ca3af;
+  --color-brand: #00a3ff;
+  --color-brand-deep: #0284c7;
+  --color-brand-light: #e0f2fe;
+  --color-accent: #f5b301;
+  --color-accent-deep: #d99e00;
+  --color-accent-light: #fef3c7;
+  --color-success: #16a34a;
+  --color-success-bg: #dcfce7;
+  --color-warning: #f59e0b;
+  --color-warning-bg: #fef3c7;
+  --color-danger: #e11d48;
+  --color-danger-bg: #ffe4e6;
+  --color-border: #e5e7eb;
+  --color-border-strong: #d1d5db;
 
-  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
-  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-plex), ui-monospace, monospace;
+  /* Legacy aliases mapped onto the new palette */
+  --color-paper: #ffffff;
+  --color-paper-light: #f5f5f5;
+  --color-pine: #00a3ff;
+  --color-pine-deep: #0f172a;
+  --color-leaf: #0284c7;
+  --color-sage: #9ca3af;
+  --color-line: #e5e7eb;
+  --color-line-strong: #d1d5db;
+  --color-clay: #f59e0b;
+  --color-clay-deep: #d97706;
+  --color-rose: #e11d48;
+  --color-cream: #f5f5f5;
 
-  --shadow-soft: 0 1px 2px rgba(21, 36, 30, 0.05), 0 8px 24px -12px rgba(21, 36, 30, 0.12);
-  --shadow-lift: 0 2px 4px rgba(21, 36, 30, 0.06), 0 18px 40px -16px rgba(21, 36, 30, 0.22);
+  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  --animate-fade-up: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-  --animate-fade-in: fade-in 0.9s ease both;
+  --shadow-soft: 0 1px 2px rgba(17, 24, 39, 0.04), 0 4px 16px -8px rgba(17, 24, 39, 0.08);
+  --shadow-lift: 0 1px 3px rgba(17, 24, 39, 0.06), 0 12px 32px -12px rgba(17, 24, 39, 0.16);
+  --shadow-card: 0 1px 2px rgba(17, 24, 39, 0.04), 0 1px 3px -1px rgba(17, 24, 39, 0.06);
+
+  --animate-fade-up: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade-in: fade-in 0.7s ease both;
   --animate-ticker: ticker 32s linear infinite;
   --animate-pulse-soft: pulse-soft 2.4s ease-in-out infinite;
 
   @keyframes fade-up {
-    from { opacity: 0; transform: translateY(22px); }
+    from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
   }
   @keyframes fade-in {
@@ -42,7 +64,7 @@
   }
   @keyframes pulse-soft {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.55; }
+    50% { opacity: 0.5; }
   }
 }
 
@@ -51,60 +73,53 @@ html {
 }
 
 body {
-  background-color: var(--color-paper);
+  background-color: var(--color-surface);
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-feature-settings: "ss01" on, "cv02" on;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: var(--color-leaf);
-  color: var(--color-paper-light);
+  background: var(--color-brand);
+  color: white;
 }
 
-/* film grain overlay for texture */
-.grain::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
-  opacity: 0.5;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
-}
-
-/* ruled medical-chart lines */
-.ruled {
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent 30px,
-    rgba(46, 107, 79, 0.06) 30px,
-    rgba(46, 107, 79, 0.06) 31px
-  );
-}
-
+/* ── Design system textures ── */
 .paper-texture {
-  background-image:
-    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(46, 107, 79, 0.08), transparent),
-    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(196, 118, 44, 0.06), transparent),
-    var(--color-paper);
+  background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
 }
 
 .ink-texture {
-  background-image:
-    radial-gradient(ellipse 90% 60% at 80% 0%, rgba(255, 255, 255, 0.05), transparent),
-    radial-gradient(ellipse 70% 50% at 10% 100%, rgba(46, 107, 79, 0.35), transparent),
-    var(--color-pine-deep);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
 }
 
 .dotted-grid {
-  background-image: radial-gradient(rgba(21, 36, 30, 0.14) 1px, transparent 1px);
-  background-size: 22px 22px;
+  background-image: radial-gradient(rgba(17, 24, 39, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.ruled {
+  background: none;
 }
 
 .hairline-b {
-  border-bottom: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ── Modern scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 3px;
+}
+
+/* ── Sidebar accent ── */
+.sidebar-accent {
+  border-left: 3px solid var(--color-brand);
 }

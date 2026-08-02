@@ -9,6 +9,18 @@ export function formatDate(iso?: string | null): string {
   });
 }
 
+/* Age in completed years from a YYYY-MM-DD date-of-birth, or null if absent/invalid. */
+export function ageFromDob(dob?: string | null): number | null {
+  if (!dob) return null;
+  const b = new Date(dob);
+  if (Number.isNaN(b.getTime())) return null;
+  const now = new Date();
+  let age = now.getFullYear() - b.getFullYear();
+  const m = now.getMonth() - b.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < b.getDate())) age -= 1;
+  return age >= 0 ? age : null;
+}
+
 export function formatDateTime(iso?: string | null): string {
   if (!iso) return "—";
   const d = new Date(iso);
@@ -72,6 +84,8 @@ export function transcriptSegments(
       time: (s as { time?: number }).time ?? (s as { start?: number }).start ?? 0,
       end: (s as { end?: number | null }).end ?? undefined,
       text: s.text ?? "",
+      text_en: (s as { text_en?: string | null }).text_en ?? undefined,
+      text_ur: (s as { text_ur?: string | null }).text_ur ?? undefined,
     }))
     .filter((s) => s.text);
 }
