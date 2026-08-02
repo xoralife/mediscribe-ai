@@ -139,12 +139,34 @@ export function DoctorOverview() {
           <div className="mt-6 grid gap-6 lg:grid-cols-2">
             <Card className="p-6">
               <h2 className="text-base font-semibold text-ink">Usage Statistics</h2>
-              <p className="mt-1 text-xs text-ink-soft">Your platform usage for the last 30 days</p>
-              <BarChart data={[
-                { day: "Mon", value: 2 }, { day: "Tue", value: 4 }, { day: "Wed", value: 3 },
-                { day: "Thu", value: 6 }, { day: "Fri", value: 5 }, { day: "Sat", value: 7 },
-                { day: "Sun", value: 4 },
-              ]} />
+              <p className="mt-1 text-xs text-ink-soft">Sessions per day for the last 7 days</p>
+              {reports.length === 0 ? (
+                <p className="mt-6 text-sm text-ink-soft">No session data yet. Start a session to see statistics.</p>
+              ) : (
+                <>
+                  <BarChart data={weeklyReportCounts(reports)} />
+                  <div className="mt-6 border-t border-border pt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-ink-muted">
+                      Recent session history
+                    </p>
+                    <div className="mt-2 max-h-44 space-y-1 overflow-y-auto">
+                      {reports.slice(0, 8).map((r) => (
+                        <div key={r.id} className="flex items-center justify-between gap-3 py-1.5">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-medium text-ink">{patientName(r.patient_id)}</p>
+                            <p className="text-xs text-ink-soft">{relativeTime(r.created_at)}</p>
+                          </div>
+                          {r.status === "approved" ? (
+                            <Badge tone="pine" dot>Approved</Badge>
+                          ) : (
+                            <Badge tone="clay" dot>Draft</Badge>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
             </Card>
 
             <Card className="p-6">
@@ -190,6 +212,22 @@ export function DoctorOverview() {
       )}
     </AppShell>
   );
+}
+
+function weeklyReportCounts(reports: Report[]): { day: string; value: number }[] {
+  const days: { day: string; value: number }[] = [];
+  const now = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    const count = reports.filter((r) => {
+      const created = new Date(r.created_at);
+      return `${created.getFullYear()}-${created.getMonth()}-${created.getDate()}` === key;
+    }).length;
+    days.push({ day: d.toLocaleDateString("en-US", { weekday: "short" }), value: count });
+  }
+  return days;
 }
 
 function BarChart({ data }: { data: { day: string; value: number }[] }) {

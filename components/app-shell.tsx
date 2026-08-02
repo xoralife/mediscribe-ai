@@ -37,6 +37,11 @@ const icons = {
       <path d="M5 2h7l3.5 3.5V18H5V2zm6.5 1v3h3L11.5 3zM7 9h6v1H7V9zm0 3h6v1H7v-1zm0 3h4v1H7v-1z" />
     </svg>
   ),
+  calendar: (
+    <svg viewBox="0 0 20 20" fill="currentColor" className="h-[18px] w-[18px]" aria-hidden>
+      <path d="M6 2v2H4.5A1.5 1.5 0 003 5.5v11A1.5 1.5 0 004.5 18h11a1.5 1.5 0 001.5-1.5v-11A1.5 1.5 0 0015.5 4H14V2h-1.5v2h-5V2H6zM4.5 7h11v8.5h-11V7zm2 2V10h7V9h-7zm0 3h2v1.5h-2V12zm3.5 0h2v1.5h-2V12z" />
+    </svg>
+  ),
   shield: (
     <svg viewBox="0 0 20 20" fill="currentColor" className="h-[18px] w-[18px]" aria-hidden>
       <path d="M10 1.5 17 4v6c0 4.5-3 7.5-7 8.5C6 17.5 3 14.5 3 10V4l7-2.5zm-3.5 9h7V9h-7v1.5z" />
@@ -87,9 +92,9 @@ function TopBar() {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-white px-4 sm:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-end gap-3 border-b border-border bg-white px-4 sm:px-6">
       {/* Global search */}
-      <form onSubmit={submit} className="relative hidden max-w-md flex-1 sm:block">
+      <form onSubmit={submit} className="relative hidden w-full max-w-md sm:block">
         <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted">
           {icons.search}
         </span>
@@ -104,35 +109,33 @@ function TopBar() {
         </kbd>
       </form>
 
-      <div className="flex flex-1 items-center justify-end gap-3 sm:flex-none">
-        {user?.role === "doctor" && (
-          <Link
-            href="/doctor/generate"
-            className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-accent-deep active:scale-[0.98]"
+      {user?.role === "doctor" && (
+        <Link
+          href="/doctor/generate"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-accent-deep active:scale-[0.98]"
+        >
+          {icons.plus}
+          New Session
+        </Link>
+      )}
+      {user && (
+        avatarUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={avatarUrl}
+            alt={user.name}
+            title={user.name}
+            className="h-9 w-9 shrink-0 rounded-full border border-border object-cover"
+          />
+        ) : (
+          <span
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand text-sm font-semibold text-white"
+            title={user.name}
           >
-            {icons.plus}
-            New Session
-          </Link>
-        )}
-        {user && (
-          avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={avatarUrl}
-              alt={user.name}
-              title={user.name}
-              className="h-9 w-9 rounded-full border border-border object-cover"
-            />
-          ) : (
-            <span
-              className="grid h-9 w-9 place-items-center rounded-full bg-brand text-sm font-semibold text-white"
-              title={user.name}
-            >
-              {initials(user.name)}
-            </span>
-          )
-        )}
-      </div>
+            {initials(user.name)}
+          </span>
+        )
+      )}
     </header>
   );
 }
@@ -301,6 +304,6 @@ export const NAV = {
     { href: "/doctor/messages", label: "Messages", icon: icons.mail, unread: true },
   ] as NavItem[],
   patient: [
-    { href: "/patient", label: "My Reports", icon: icons.file, exact: true },
+    { href: "/patient", label: "Appointments", icon: icons.calendar, exact: true },
   ] as NavItem[],
 };

@@ -34,6 +34,7 @@ export async function me(token?: string): Promise<User> {
 export async function uploadAvatar(file: File): Promise<User> {
   const form = new FormData();
   form.append("file", file);
+  // Don't set Content-Type manually — axios detects FormData and adds the multipart boundary itself.
   const { data } = await http.post<User>("/doctor/profile/avatar", form);
   return data;
 }

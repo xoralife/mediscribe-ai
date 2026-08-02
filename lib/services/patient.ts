@@ -1,8 +1,10 @@
-import { http, isNetworkError, errorMessage } from "@/lib/http";
-import type { Report, User } from "@/lib/types";
+import { http } from "@/lib/http";
+import type { AppointmentHistoryItem, User } from "@/lib/types";
 
-export async function myReports(userId?: string): Promise<Report[]> {
-  const { data } = await http.get<Report[]>(`/patient/reports${userId ? `?user_id=${userId}` : ""}`);
+export async function appointmentHistory(patientId?: string): Promise<AppointmentHistoryItem[]> {
+  const { data } = await http.get<AppointmentHistoryItem[]>(
+    `/patient/history${patientId ? `?user_id=${patientId}` : ""}`
+  );
   return data;
 }
 

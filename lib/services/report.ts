@@ -31,9 +31,10 @@ export async function generateReport(payload: GenerateReportPayload): Promise<Re
   const fd = new FormData();
   fd.append("patient_id", payload.patient_id);
   if (payload.audio) fd.append("audio", payload.audio);
-  const { data } = await http.post<Report>("/generate-report", fd, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  // No manual Content-Type — axios detects FormData and sets multipart with boundary.
+  // The AI pipeline (Mistral → Gemini → RxNorm) can take minutes — don't let the
+  // default 120s timeout kill it.
+  const { data } = await http.post<Report>("/generate-report", fd, { timeout: 600000 });
   return normalizeReport(data);
 }
 

@@ -114,6 +114,16 @@ export interface Report {
   approved_at?: string | null;
 }
 
+/* The only report data a patient may see: when and with whom the visit happened. */
+export interface AppointmentHistoryItem {
+  id: string;
+  doctor_id: string;
+  doctor_name: string;
+  specialization?: string | null;
+  appointment_at: string;
+  status: ReportStatus;
+}
+
 export interface AuthSession {
   token: string;
   user: User;

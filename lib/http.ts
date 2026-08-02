@@ -8,7 +8,6 @@ export const API_BASE_URL =
 export const http = axios.create({
   baseURL: API_BASE_URL,
   timeout: 120000,
-  headers: { "Content-Type": "application/json" },
 });
 
 /* Attach the JWT on every request. */

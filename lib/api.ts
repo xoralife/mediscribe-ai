@@ -12,6 +12,7 @@ import type {
   AdminStats,
   AdminUser,
   AdminUserUpdate,
+  AppointmentHistoryItem,
   AuthSession,
   ContactMessage,
   ContactMessageCreate,
@@ -58,7 +59,7 @@ export const api = {
   updateReport: (id: string, extraction: Extraction): Promise<Report> => reportService.updateReport(id, extraction),
   approveReport: (id: string): Promise<Report> => reportService.approveReport(id),
   downloadReportPdf: (id: string): Promise<Blob> => reportService.downloadReportPdf(id),
-  patientReports: (): Promise<Report[]> => patientService.myReports(),
+  appointmentHistory: (): Promise<AppointmentHistoryItem[]> => patientService.appointmentHistory(),
   patientDoctors: (): Promise<User[]> => patientService.patientDoctors(),
   publicDoctors: (): Promise<PublicDoctor[]> => publicService.publicDoctors(),
   sendContactMessage: (p: ContactMessageCreate): Promise<ContactMessage> =>
