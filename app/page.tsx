@@ -2,11 +2,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { Logo } from "@/components/logo";
 import { LandingDoctors } from "@/components/landing-doctors";
+import ContactForm from "@/components/contact-form";
 
 const NAV_LINKS = [
   { href: "#how", label: "How it works" },
   { href: "#features", label: "Features" },
   { href: "#doctors", label: "Our doctors" },
+  { href: "#contact", label: "Contact" },
 ];
 
 export default function LandingPage() {
@@ -320,6 +322,90 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Contact Us */}
+      <section id="contact" className="mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
+        <div className="grid gap-16 lg:grid-cols-2 lg:items-start">
+          <div>
+            <p className="mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-brand">Get in touch</p>
+            <h2 className="max-w-xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-5xl">
+              Ready to transform your clinical workflow?
+            </h2>
+            <p className="mt-6 max-w-md text-base leading-relaxed text-ink-soft">
+              Have questions about MediScribe AI or want to request a specific feature? 
+              Our team is here to help you integrate AI into your practice securely.
+            </p>
+            
+            <div className="mt-10 space-y-5">
+              {[
+                { 
+                  icon: (
+                    <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" stroke="currentColor" strokeWidth="1.6">
+                      <rect x="2" y="4" width="20" height="16" rx="2" />
+                      <path d="M2 7l10 6 10-6" strokeLinecap="round" />
+                    </svg>
+                  ), 
+                  label: "Email us", 
+                  value: "hello@mediscribe.ai" 
+                },
+                { 
+                  icon: (
+                    <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" stroke="currentColor" strokeWidth="1.6">
+                      <path d="M12 2C8.1 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3.1-7-7-7z" />
+                      <circle cx="12" cy="9" r="2.5" />
+                    </svg>
+                  ), 
+                  label: "Location", 
+                  value: "Medical Tech Hub, Silicon Valley" 
+                },
+                { 
+                  icon: (
+                    <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" stroke="currentColor" strokeWidth="1.6">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M12 7v5l3 3" strokeLinecap="round" />
+                    </svg>
+                  ), 
+                  label: "Support hours", 
+                  value: "Mon – Fri, 9am – 6pm PST" 
+                },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center gap-4">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-border bg-surface-alt text-brand">
+                    {item.icon}
+                  </span>
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-muted">{item.label}</p>
+                    <p className="text-sm font-medium text-ink">{item.value}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-10 rounded-xl border border-border bg-surface-alt/60 p-5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-ink-muted mb-3">Why reach out?</p>
+              <ul className="space-y-2.5">
+                {[
+                  "Request a personalized demo for your clinic",
+                  "Get technical support or onboarding help",
+                  "Explore partnership opportunities",
+                ].map((t) => (
+                  <li key={t} className="flex items-start gap-2.5 text-sm text-ink-soft">
+                    <svg viewBox="0 0 20 20" fill="currentColor" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand">
+                      <path fillRule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-8 8a1 1 0 01-1.4 0l-4-4a1 1 0 011.4-1.4L8 12.58l7.3-7.28a1 1 0 011.4 0z" />
+                    </svg>
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="absolute -inset-4 rounded-3xl bg-brand/5 blur-2xl" />
+            <ContactForm />
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="border-t border-border bg-surface-alt/50">
         <div className="mx-auto max-w-6xl px-5 pb-8 pt-14 sm:px-8">
@@ -343,6 +429,7 @@ export default function LandingPage() {
                   { href: "#how", label: "How it works" },
                   { href: "#features", label: "Features" },
                   { href: "#doctors", label: "Our doctors" },
+                  { href: "#contact", label: "Contact" },
                   { href: "/login", label: "Sign in" },
                   { href: "/register", label: "Try the demo" },
                 ].map((l) => (
