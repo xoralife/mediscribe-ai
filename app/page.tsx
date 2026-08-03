@@ -454,7 +454,7 @@ export default function LandingPage() {
             </div>
 
             <div>
-              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-muted">Demo accounts</p>
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-muted">Contact</p>
               <ul className="mt-4 space-y-2.5 text-sm">
                 {[
                   { role: "phone", email: "+923425624760" },
