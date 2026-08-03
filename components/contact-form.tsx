@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { api } from "@/lib/api";
+import { errorMessage } from "@/lib/http";
 
 const SUBJECTS = [
   "General Inquiry",
@@ -58,17 +59,15 @@ export default function ContactForm() {
     }
     setLoading(true);
     try {
-      const fullMessage = `Subject: ${form.subject}\n\n${form.message}`;
       await api.sendContactMessage({
-        doctor_id: "00000000-0000-0000-0000-000000000000",
         name: form.name,
         email: form.email,
         phone: form.phone,
-        message: fullMessage,
+        message: form.message,
       });
       setSent(true);
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : "Failed to send message. Please try again.");
+      setSubmitError(errorMessage(err, "Failed to send message. Please try again."));
     } finally {
       setLoading(false);
     }
