@@ -50,6 +50,8 @@ export const api = {
   adminDeleteUser: (userId: string): Promise<void> => adminService.deleteUser(userId),
   adminUploadUserAvatar: (userId: string, file: File): Promise<AdminUser> =>
     adminService.uploadUserAvatar(userId, file),
+  adminContactMessages: (): Promise<ContactMessage[]> =>
+    adminService.adminContactMessages(),
   createPatient: (p: CreatePatientPayload): Promise<User> => doctorService.createPatient(p),
   myPatients: (): Promise<User[]> => doctorService.listPatients(),
   searchPatients: (query: string): Promise<User[]> => doctorService.searchPatients(query),

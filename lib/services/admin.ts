@@ -5,6 +5,7 @@ import type {
   AdminStats,
   AdminUser,
   AdminUserUpdate,
+  ContactMessage,
   IntegrationsStatus,
   User,
 } from "@/lib/types";
@@ -64,5 +65,10 @@ export async function uploadUserAvatar(userId: string, file: File): Promise<Admi
   const form = new FormData();
   form.append("file", file);
   const { data } = await http.post<AdminUser>(`/admin/users/${userId}/avatar`, form);
+  return data;
+}
+
+export async function adminContactMessages(): Promise<ContactMessage[]> {
+  const { data } = await http.get<ContactMessage[]>("/admin/contact-messages");
   return data;
 }

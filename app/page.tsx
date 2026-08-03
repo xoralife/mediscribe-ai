@@ -344,18 +344,18 @@ export default function LandingPage() {
                       <path d="M2 7l10 6 10-6" strokeLinecap="round" />
                     </svg>
                   ), 
-                  label: "Email us", 
-                  value: "hello@mediscribe.ai" 
+                  label: "Email us",
+                  value: "syedmohsinali4345@gmail.com"
                 },
-                { 
+                {
                   icon: (
                     <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" stroke="currentColor" strokeWidth="1.6">
                       <path d="M12 2C8.1 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3.1-7-7-7z" />
                       <circle cx="12" cy="9" r="2.5" />
                     </svg>
-                  ), 
-                  label: "Location", 
-                  value: "Medical Tech Hub, Silicon Valley" 
+                  ),
+                  label: "Address",
+                  value: "Akhwat First Campus, Faisalabad" 
                 },
                 { 
                   icon: (
