@@ -370,16 +370,16 @@ export default function LandingPage() {
               <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-muted">Demo accounts</p>
               <ul className="mt-4 space-y-2.5 text-sm">
                 {[
-                  { role: "Admin", email: "admin@gmail.com" },
-                  { role: "Doctor", email: "dr.rohan@mediscribe.ai" },
-                  { role: "Patient", email: "ananya@mediscribe.ai" },
+                  { role: "phone", email: "+923425624760" },
+                  { role: "email", email: "abidhussainiou@gmail.com" },
+                  { role: "address", email: "Agahadi Chowk, Skardu, Gilgit Baltistan" },
                 ].map((a) => (
                   <li key={a.role}>
                     <p className="text-ink font-medium">{a.role}</p>
                     <p className="font-mono text-[11px] text-ink-soft">{a.email}</p>
                   </li>
                 ))}
-                <li className="pt-1 font-mono text-[11px] text-ink-muted">password · demo1234</li>
+                <li className="pt-1 font-mono text-[11px] text-ink-muted"></li>
               </ul>
             </div>
           </div>

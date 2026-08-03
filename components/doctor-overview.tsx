@@ -106,9 +106,7 @@ export function DoctorOverview() {
             <TabButton active={tab === "recent"} onClick={() => setTab("recent")}>
               Recent Sessions
             </TabButton>
-            <TabButton active={tab === "upcoming"} onClick={() => setTab("upcoming")}>
-              Upcoming Appointments
-            </TabButton>
+            
           </div>
 
           {/* Recent sessions */}
