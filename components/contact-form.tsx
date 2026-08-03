@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { api } from "@/lib/api";
 
 const SUBJECTS = [
   "General Inquiry",
@@ -14,21 +15,25 @@ const SUBJECTS = [
 interface FormState {
   name: string;
   email: string;
+  phone: string;
   subject: string;
   message: string;
 }
 
 export default function ContactForm() {
-  const [form, setForm] = useState<FormState>({ name: "", email: "", subject: "", message: "" });
+  const [form, setForm] = useState<FormState>({ name: "", email: "", phone: "", subject: "", message: "" });
   const [errors, setErrors] = useState<Partial<FormState>>({});
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const validate = () => {
     const errs: Partial<FormState> = {};
     if (!form.name.trim()) errs.name = "Name is required";
     if (!form.email.trim()) errs.email = "Email is required";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = "Invalid email address";
+    if (!form.phone.trim()) errs.phone = "Phone number is required";
+    else if (!/^\+?[\d\s-]{10,}$/.test(form.phone.trim())) errs.phone = "Enter a valid phone number";
     if (!form.subject) errs.subject = "Please select a subject";
     if (!form.message.trim()) errs.message = "Message is required";
     else if (form.message.trim().length < 20) errs.message = "Message must be at least 20 characters";
@@ -45,15 +50,28 @@ export default function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError("");
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       return;
     }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1800));
-    setLoading(false);
-    setSent(true);
+    try {
+      const fullMessage = `Subject: ${form.subject}\n\n${form.message}`;
+      await api.sendContactMessage({
+        doctor_id: "00000000-0000-0000-0000-000000000000",
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        message: fullMessage,
+      });
+      setSent(true);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Failed to send message. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (sent) {
@@ -70,7 +88,7 @@ export default function ContactForm() {
             Thank you for reaching out. Our team will get back to you within 24 hours.
           </p>
           <button
-            onClick={() => { setSent(false); setForm({ name: "", email: "", subject: "", message: "" }); }}
+            onClick={() => { setSent(false); setForm({ name: "", email: "", phone: "", subject: "", message: "" }); }}
             className="mt-6 rounded-lg border border-border px-5 py-2 text-sm font-medium text-ink transition-all hover:border-brand hover:text-brand"
           >
             Send another message
@@ -137,36 +155,61 @@ export default function ContactForm() {
           </div>
         </div>
 
-        <div className="space-y-1.5">
-          <label htmlFor="subject" className="text-xs font-semibold uppercase tracking-wider text-ink-muted">
-            Subject <span className="text-danger">*</span>
-          </label>
-          <div className="relative">
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-muted">
-              <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" stroke="currentColor" strokeWidth="1.6">
-                <path d="M4 6h12M4 10h8" strokeLinecap="round" />
-                <path d="M4 14h5" strokeLinecap="round" />
-              </svg>
-            </span>
-            <select
-              id="subject"
-              name="subject"
-              value={form.subject}
-              onChange={handleChange}
-              className={`w-full appearance-none rounded-lg border bg-surface-alt/30 py-2.5 pl-10 pr-10 text-sm text-ink outline-none transition-all ${errors.subject ? "border-danger focus:border-danger focus:ring-danger/20" : "border-border-strong focus:border-brand focus:ring-brand/20"} focus:ring-2`}
-            >
-              <option value="" disabled>Select a topic...</option>
-              {SUBJECTS.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none">
-              <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
-                <path d="M5 8l5 5 5-5" />
-              </svg>
-            </span>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <label htmlFor="phone" className="text-xs font-semibold uppercase tracking-wider text-ink-muted">
+              Phone Number <span className="text-danger">*</span>
+            </label>
+            <div className="relative">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-muted">
+                <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" stroke="currentColor" strokeWidth="1.6">
+                  <path d="M4 4h4l1.5 3.5-2 1.2c.8 1.5 2 2.5 3.5 3l1.2-2L15 12h4V4c0-1-.5-2-2-3-4-1-6-1-9 3-1.5 1.5-2 4-1 6l1 1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                value={form.phone}
+                onChange={handleChange}
+                placeholder="+92 300 1234567"
+                className={`w-full rounded-lg border bg-surface-alt/30 py-2.5 pl-10 pr-3.5 text-sm text-ink outline-none transition-all placeholder:text-ink-muted ${errors.phone ? "border-danger focus:border-danger focus:ring-danger/20" : "border-border-strong focus:border-brand focus:ring-brand/20"} focus:ring-2`}
+              />
+            </div>
+            {errors.phone && <p className="text-xs text-danger">{errors.phone}</p>}
           </div>
-          {errors.subject && <p className="text-xs text-danger">{errors.subject}</p>}
+
+          <div className="space-y-1.5">
+            <label htmlFor="subject" className="text-xs font-semibold uppercase tracking-wider text-ink-muted">
+              Subject <span className="text-danger">*</span>
+            </label>
+            <div className="relative">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-muted">
+                <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" stroke="currentColor" strokeWidth="1.6">
+                  <path d="M4 6h12M4 10h8" strokeLinecap="round" />
+                  <path d="M4 14h5" strokeLinecap="round" />
+                </svg>
+              </span>
+              <select
+                id="subject"
+                name="subject"
+                value={form.subject}
+                onChange={handleChange}
+                className={`w-full appearance-none rounded-lg border bg-surface-alt/30 py-2.5 pl-10 pr-10 text-sm text-ink outline-none transition-all ${errors.subject ? "border-danger focus:border-danger focus:ring-danger/20" : "border-border-strong focus:border-brand focus:ring-brand/20"} focus:ring-2`}
+              >
+                <option value="" disabled>Select a topic...</option>
+                {SUBJECTS.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+              <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none">
+                <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                  <path d="M5 8l5 5 5-5" />
+                </svg>
+              </span>
+            </div>
+            {errors.subject && <p className="text-xs text-danger">{errors.subject}</p>}
+          </div>
         </div>
 
         <div className="space-y-1.5">
@@ -190,6 +233,12 @@ export default function ContactForm() {
           </div>
           {errors.message && <p className="text-xs text-danger">{errors.message}</p>}
         </div>
+
+        {submitError && (
+          <div className="rounded-lg border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger">
+            {submitError}
+          </div>
+        )}
 
         <div className="flex items-center justify-between gap-4 pt-1">
           <p className="text-xs text-ink-muted">

@@ -8,7 +8,7 @@ import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { ageFromDob, formatDate, initials, relativeTime } from "@/lib/format";
 import { errorMessage, isNetworkError } from "@/lib/http";
-import type { AdminStats, AdminUser, IntegrationsStatus, User } from "@/lib/types";
+import type { AdminStats, AdminUser, ContactMessage, IntegrationsStatus, User } from "@/lib/types";
 
 const REFRESH_MS = 20_000;
 
@@ -25,6 +25,7 @@ export function AdminDashboard() {
   const [directory, setDirectory] = useState<AdminUser[]>([]);
   const [pendingDoctors, setPendingDoctors] = useState<User[]>([]);
   const [integrations, setIntegrations] = useState<IntegrationsStatus | null>(null);
+  const [contactMessages, setContactMessages] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [toast, setToast] = useState("");
@@ -49,6 +50,12 @@ export function AdminDashboard() {
       setDirectory(d);
       setIntegrations(i);
       setPendingDoctors(p);
+      try {
+        const c = await api.adminContactMessages();
+        setContactMessages(c);
+      } catch {
+        setContactMessages([]);
+      }
     } catch (e) {
       if (isNetworkError(e)) {
         flash("Cannot reach the backend — is uvicorn running on port 8000?");
@@ -306,6 +313,63 @@ export function AdminDashboard() {
           AI pipeline services
         </p>
         <IntegrationsPanel integrations={integrations} loading={loading} onRefresh={() => load(true)} />
+      </section>
+
+      {/* Contact Messages */}
+      <section className="mb-12">
+        <div className="mb-4 flex items-center justify-between">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-sage">
+            Contact Messages
+          </p>
+          {contactMessages.length > 0 && (
+            <Badge tone="clay" dot>{contactMessages.length} total</Badge>
+          )}
+        </div>
+        <Card className="overflow-hidden">
+          {loading && contactMessages.length === 0 ? (
+            <div className="p-6 text-sm text-ink-soft">Loading messages…</div>
+          ) : contactMessages.length === 0 ? (
+            <div className="p-8 text-center">
+              <p className="text-sm text-ink-soft">
+                No contact messages yet. Messages from the landing page will appear here.
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-border">
+              {contactMessages.map((msg) => (
+                <div key={msg.id} className="px-5 py-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand/10 text-sm font-semibold text-brand">
+                        {msg.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
+                      </span>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="truncate text-sm font-medium text-ink">{msg.name}</p>
+                          {!msg.read && <Badge tone="clay" dot>New</Badge>}
+                        </div>
+                        <p className="truncate text-xs text-ink-soft">
+                          {msg.email} · {msg.phone}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="shrink-0 font-mono text-[10px] text-sage">
+                      {new Date(msg.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                    </p>
+                  </div>
+                  <div className="mt-3 rounded-lg bg-surface-alt/50 px-4 py-3">
+                    <p className="text-xs font-medium uppercase tracking-wider text-ink-muted mb-1">
+                      {msg.message.split("\n")[0].replace("Subject: ", "")}
+                    </p>
+                    <p className="text-sm text-ink-soft line-clamp-3">
+                      {msg.message.split("\n\n").slice(1).join("\n\n")}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
       </section>
 
       {/* Edit modal */}
