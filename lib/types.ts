@@ -25,7 +25,7 @@ export interface PublicDoctor {
 }
 
 export interface ContactMessageCreate {
-  doctor_id: string;
+  doctor_id?: string | null;
   name: string;
   email: string;
   phone: string;

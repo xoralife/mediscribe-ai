@@ -3,7 +3,7 @@ import { clearSession, getToken } from "./token";
 
 /* Base URL from env, defaults to the local FastAPI backend. */
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1";
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://mediscribe-ai.fastapicloud.dev/api/v1";
 
 export const http = axios.create({
   baseURL: API_BASE_URL,
@@ -44,13 +44,24 @@ export function isNetworkError(error: unknown): boolean {
 }
 
 /* Surface a friendly message from an API/network failure. */
-export function errorMessage(error: unknown, fallback = "Something went wrong."): string {
+export function errorMessage(error: unknown, fallback = "Something went wrong. Please try again."): string {
   if (axios.isAxiosError(error)) {
     const detail = error.response?.data as { detail?: string; message?: string } | undefined;
     if (detail?.detail) return detail.detail;
     if (detail?.message) return detail.message;
-    if (!error.response) return "Cannot reach the server. Check that the backend is running.";
-    return error.message;
+    if (!error.response) {
+      return "The contact service is temporarily unavailable. Please try again later.";
+    }
+    switch (error.response.status) {
+      case 404:
+        return "The contact service was not found. Please try again later.";
+      case 422:
+        return "The information you provided could not be processed. Please check your input and try again.";
+      case 500:
+        return "The server encountered an error. Please try again in a few moments.";
+      default:
+        return error.message || fallback;
+    }
   }
   if (error instanceof Error) return error.message;
   return fallback;
