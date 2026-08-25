@@ -64,9 +64,10 @@ export default function LandingPage() {
               <span className="text-brand">clinical notes</span> out.
             </h1>
             <p className="mt-6 max-w-xl text-base leading-relaxed text-ink-soft sm:text-lg animate-fade-up">
-              MediScribe listens to your consultation, drafts a structured SOAP note with
-              Generative AI, validates every medication against RxNorm, and hands the pen back to
-              you — nothing reaches the patient until you approve it.
+              MediScribe AI is an AI-powered healthcare documentation assistant that converts
+               doctor-patient conversation recordings into structured medical records. It reduces manual
+                documentation work for doctors by automatically generating SOAP notes and important clinical
+                 insights.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-4 animate-fade-up">
               <Link
