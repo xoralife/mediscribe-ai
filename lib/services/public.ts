@@ -9,6 +9,6 @@ export async function publicDoctors(): Promise<PublicDoctor[]> {
 
 /* Send a contact message to a doctor from the landing-page form — no auth required. */
 export async function sendContactMessage(payload: ContactMessageCreate): Promise<ContactMessage> {
-  const { data } = await http.post<ContactMessage>("/public/contact", payload);
+  const { data } = await http.post<ContactMessage>("/contact", payload);
   return data;
 }

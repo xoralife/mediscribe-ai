@@ -55,10 +55,14 @@ export function errorMessage(error: unknown, fallback = "Something went wrong. P
     switch (error.response.status) {
       case 404:
         return "The contact service was not found. Please try again later.";
+      case 409:
+        return "We couldn't save that. Please check the details and try again.";
       case 422:
         return "The information you provided could not be processed. Please check your input and try again.";
       case 500:
         return "The server encountered an error. Please try again in a few moments.";
+      case 503:
+        return "The service is temporarily busy. Please try again in a few seconds.";
       default:
         return error.message || fallback;
     }
