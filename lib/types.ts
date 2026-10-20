@@ -24,18 +24,31 @@ export interface PublicDoctor {
   created_at: string;
 }
 
+/* Which destination a submitted contact message is routed to.
+   patient_to_doctor — the patient contacted a specific doctor (that doctor's inbox).
+   doctor_to_us      — the doctor wants to register with the platform (admin inbox).
+   general           — legacy messages that predate the intent split. */
+export type ContactIntent = "patient_to_doctor" | "doctor_to_us" | "general";
+
 export interface ContactMessageCreate {
+  intent: Exclude<ContactIntent, "general">;
   doctor_id?: string | null;
+  doctor_email?: string | null;
+  subject?: string | null;
+  specialization?: string | null;
   name: string;
   email: string;
   phone: string;
-  age?: string | null;
+  age?: number | null;
   message: string;
 }
 
 export interface ContactMessage {
   id: string;
-  doctor_id: string;
+  doctor_id: string | null;
+  intent: ContactIntent;
+  subject?: string | null;
+  specialization?: string | null;
   name: string;
   email: string;
   phone: string;

@@ -36,6 +36,15 @@ export function AdminDashboard() {
   const [editError, setEditError] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
+  /* Onboarding a doctor who applied through the landing-page form. */
+  const [onboardTarget, setOnboardTarget] = useState<ContactMessage | null>(null);
+  const [onboardPassword, setOnboardPassword] = useState("");
+  const [onboardSaving, setOnboardSaving] = useState(false);
+  const [onboardError, setOnboardError] = useState("");
+
+  const doctorApplications = contactMessages.filter((m) => m.intent === "doctor_to_us");
+  const patientEnquiries = contactMessages.filter((m) => m.intent !== "doctor_to_us");
+
   const load = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
     else setRefreshing(true);
@@ -131,6 +140,32 @@ export function AdminDashboard() {
       flash(err instanceof Error ? err.message : "Failed to remove user.");
     }
     setDeleteId(null);
+  };
+
+  /* Turn a doctor application into a real, approved doctor account. */
+  const onboardDoctor = async (application: ContactMessage) => {
+    if (!onboardPassword.trim()) {
+      setOnboardError("Set an initial password for their account.");
+      return;
+    }
+    setOnboardSaving(true);
+    setOnboardError("");
+    try {
+      await api.adminCreateDoctor({
+        name: application.name,
+        email: application.email,
+        password: onboardPassword,
+        specialization: application.specialization ?? undefined,
+      });
+      flash(`${application.name} can now sign in as a doctor.`);
+      setOnboardTarget(null);
+      setOnboardPassword("");
+      load(true);
+    } catch (err) {
+      setOnboardError(errorMessage(err, "Failed to create the doctor account."));
+    } finally {
+      setOnboardSaving(false);
+    }
   };
 
   if (user?.role !== "admin") {
@@ -315,33 +350,34 @@ export function AdminDashboard() {
         <IntegrationsPanel integrations={integrations} loading={loading} onRefresh={() => load(true)} />
       </section>
 
-      {/* Contact Messages */}
+      {/* Doctor applications — doctors who asked to join the platform */}
       <section className="mb-12">
         <div className="mb-4 flex items-center justify-between">
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-sage">
-            Contact Messages
+            Doctor applications
           </p>
-          {contactMessages.length > 0 && (
-            <Badge tone="clay" dot>{contactMessages.length} total</Badge>
+          {doctorApplications.length > 0 && (
+            <Badge tone="clay" dot>{doctorApplications.length} pending</Badge>
           )}
         </div>
         <Card className="overflow-hidden">
           {loading && contactMessages.length === 0 ? (
-            <div className="p-6 text-sm text-ink-soft">Loading messages…</div>
-          ) : contactMessages.length === 0 ? (
+            <div className="p-6 text-sm text-ink-soft">Loading applications…</div>
+          ) : doctorApplications.length === 0 ? (
             <div className="p-8 text-center">
               <p className="text-sm text-ink-soft">
-                No contact messages yet. Messages from the landing page will appear here.
+                No applications yet. When a doctor requests access from the landing page, their
+                application shows up here.
               </p>
             </div>
           ) : (
             <div className="divide-y divide-border">
-              {contactMessages.map((msg) => (
+              {doctorApplications.map((msg) => (
                 <div key={msg.id} className="px-5 py-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-3">
                       <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand/10 text-sm font-semibold text-brand">
-                        {msg.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
+                        {msg.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                       </span>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
@@ -357,14 +393,117 @@ export function AdminDashboard() {
                       {new Date(msg.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                     </p>
                   </div>
-                  <div className="mt-3 rounded-lg bg-surface-alt/50 px-4 py-3">
-                    <p className="text-xs font-medium uppercase tracking-wider text-ink-muted mb-1">
-                      {msg.message.split("\n")[0].replace("Subject: ", "")}
-                    </p>
-                    <p className="text-sm text-ink-soft line-clamp-3">
-                      {msg.message.split("\n\n").slice(1).join("\n\n")}
+
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    {msg.specialization && (
+                      <Badge tone="sage">{msg.specialization}</Badge>
+                    )}
+                    {msg.subject && <Badge tone="clay">{msg.subject}</Badge>}
+                  </div>
+
+                  <p className="mt-3 whitespace-pre-wrap rounded-lg bg-surface-alt/50 px-4 py-3 text-sm text-ink-soft">
+                    {msg.message}
+                  </p>
+
+                  {onboardTarget?.id === msg.id ? (
+                    <div className="mt-3 rounded-lg border border-line bg-surface-alt/40 p-4">
+                      <p className="text-xs font-medium uppercase tracking-wider text-ink-muted">
+                        Set a password for their account
+                      </p>
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        <input
+                          type="password"
+                          value={onboardPassword}
+                          onChange={(e) => setOnboardPassword(e.target.value)}
+                          placeholder="Initial password"
+                          className="min-w-[200px] flex-1 rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none focus:border-brand"
+                        />
+                        <Button onClick={() => onboardDoctor(msg)} loading={onboardSaving}>
+                          Create account
+                        </Button>
+                        <Button variant="ghost" onClick={() => setOnboardTarget(null)}>
+                          Cancel
+                        </Button>
+                      </div>
+                      {onboardError && (
+                        <p className="mt-2 rounded-lg border border-rose/25 bg-rose/10 px-3 py-2 text-sm text-rose">
+                          {onboardError}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="mt-3">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setOnboardTarget(msg);
+                          setOnboardPassword("");
+                          setOnboardError("");
+                        }}
+                      >
+                        Onboard as doctor
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+      </section>
+
+      {/* Patient enquiries — messages routed to a specific doctor */}
+      <section className="mb-12">
+        <div className="mb-4 flex items-center justify-between">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-sage">
+            Patient enquiries
+          </p>
+          {patientEnquiries.length > 0 && (
+            <Badge tone="clay" dot>{patientEnquiries.length} total</Badge>
+          )}
+        </div>
+        <Card className="overflow-hidden">
+          {loading && contactMessages.length === 0 ? (
+            <div className="p-6 text-sm text-ink-soft">Loading messages…</div>
+          ) : patientEnquiries.length === 0 ? (
+            <div className="p-8 text-center">
+              <p className="text-sm text-ink-soft">
+                No patient enquiries yet. Messages sent to a named doctor appear in that
+                doctor&apos;s inbox — this is the platform-wide view.
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-border">
+              {patientEnquiries.map((msg) => (
+                <div key={msg.id} className="px-5 py-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand/10 text-sm font-semibold text-brand">
+                        {msg.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+                      </span>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="truncate text-sm font-medium text-ink">{msg.name}</p>
+                          {!msg.read && <Badge tone="clay" dot>New</Badge>}
+                        </div>
+                        <p className="truncate text-xs text-ink-soft">
+                          {msg.email} · {msg.phone}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="shrink-0 font-mono text-[10px] text-sage">
+                      {new Date(msg.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                     </p>
                   </div>
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    {msg.subject && <Badge tone="clay">{msg.subject}</Badge>}
+                    {msg.age != null && <Badge tone="sage">Age {msg.age}</Badge>}
+                    {msg.doctor_id && <Badge tone="sage">Routed to a doctor</Badge>}
+                  </div>
+                  <p className="mt-3 whitespace-pre-wrap rounded-lg bg-surface-alt/50 px-4 py-3 text-sm text-ink-soft">
+                    {msg.message}
+                  </p>
                 </div>
               ))}
             </div>

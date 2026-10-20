@@ -41,8 +41,8 @@ export function DoctorMessages() {
     <AppShell nav={NAV.doctor} roleLabel="Doctor">
       <PageHeader
         eyebrow="Messages"
-        title="Contact messages"
-        description="Messages sent to you from the public website contact form."
+        title="Patient enquiries"
+        description="Messages patients sent to you from the website contact form."
         actions={
           <Button variant="outline" onClick={load}>
             <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 mr-1" stroke="currentColor" strokeWidth="1.6">
@@ -85,8 +85,8 @@ export function DoctorMessages() {
         </div>
       ) : messages.length === 0 ? (
         <EmptyState
-          title="No messages yet"
-          description="When someone sends a message from the website's Contact Now form, it will appear here."
+          title="No enquiries yet"
+          description="When a patient contacts you from the website, their message will appear here."
         />
       ) : (
         <div className="space-y-4">
@@ -130,7 +130,12 @@ export function DoctorMessages() {
                   )}
                 </div>
               </div>
-              <p className="mt-4 whitespace-pre-wrap rounded-xl border border-line bg-cream/50 px-4 py-3 text-sm leading-relaxed text-ink-soft">
+              {m.subject && (
+                <p className="mt-3 font-mono text-[10px] uppercase tracking-wider text-clay-deep">
+                  {m.subject}
+                </p>
+              )}
+              <p className="mt-2 whitespace-pre-wrap rounded-xl border border-line bg-cream/50 px-4 py-3 text-sm leading-relaxed text-ink-soft">
                 {m.message}
               </p>
             </Card>

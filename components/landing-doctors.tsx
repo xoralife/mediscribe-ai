@@ -82,11 +82,12 @@ export function LandingDoctors() {
     setSending(true);
     try {
       await api.sendContactMessage({
+        intent: "patient_to_doctor",
         doctor_id: contact.id,
         name,
         email,
         phone,
-        age: age || null,
+        age: age ? Number(age) : null,
         message,
       });
       setSent(true);

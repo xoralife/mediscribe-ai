@@ -345,7 +345,7 @@ export default function LandingPage() {
                     </svg>
                   ), 
                   label: "Email us",
-                  value: "syedmohsinali4345@gmail.com"
+                  value: "syedmohsinkazmi23@gmail.com"
                 },
                 {
                   icon: (
@@ -355,7 +355,7 @@ export default function LandingPage() {
                     </svg>
                   ),
                   label: "Address",
-                  value: "Akhwat First Campus, Faisalabad" 
+                  value: "Sckarma-Tech, Skardu" 
                 },
                 { 
                   icon: (
@@ -418,7 +418,7 @@ export default function LandingPage() {
               </p>
               <p className="mt-5 inline-flex items-center gap-2 rounded-full border border-brand/25 bg-brand/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-brand">
                 <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse-soft" />
-                Generative AI Track · Hackathon 2026
+                Let's build the future of healthcare together 
               </p>
             </div>
 
